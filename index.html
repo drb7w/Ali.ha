@@ -3,56 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SECURE TERMINAL v7.0</title>
+    <title>SECURE TERMINAL</title>
     <style>
         * { -webkit-user-select: none; user-select: none; }
         body { background: #000; color: #00ff00; font-family: 'Courier New', monospace; text-align: center; padding: 20px; overflow-x: hidden; }
         .video-container { margin: 20px auto; max-width: 400px; border: 2px solid #00ff00; box-shadow: 0 0 20px #00ff00; border-radius: 15px; overflow: hidden; background: #111; }
         .btn-hack { background: transparent; color: #ff0000; border: 2px solid #ff0000; padding: 15px 30px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: bold; box-shadow: 0 0 10px #ff0000; border-radius: 5px; }
-        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: #0f0; padding: 30px 20px; text-align: left; z-index: 9999; font-size: 14px; overflow-y: auto; white-space: pre-wrap; line-height: 1.6; }
+        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: #0f0; padding: 30px 20px; text-align: left; z-index: 9999; font-size: 14px; overflow-y: auto; white-space: pre-wrap; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="main-content" style="display:none;">
-        <h1 style="text-shadow: 0 0 15px #00ff00;">نظام الوصول المشفر 🛡️</h1>
+        <h1>نظام الوصول المشفر 🛡️</h1>
         <div class="video-container">
-            <iframe src="https://www.instagram.com/reel/DT5Ht6zjAOY/embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+            <iframe src="https://www.instagram.com/reel/DT5Ht6zjAOY/embed" width="100%" height="480" frameborder="0" scrolling="no"></iframe>
         </div>
         <button class="btn-hack" onclick="startHacking()">تفعيل البروتوكول السري ⚡</button>
     </div>
 
     <div id="hacker-screen"><div id="hack-text"></div></div>
-    <audio id="typeSound" src="https://www.soundjay.com/communication/typewriter-key-1.mp3" preload="auto"></audio>
-    <audio id="alarmSound" src="https://www.soundjay.com/buttons/beep-01a.mp3" preload="auto"></audio>
+    <audio id="typeSound" src="https://www.soundjay.com/communication/typewriter-key-1.mp3"></audio>
+    <audio id="alarmSound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
 
     <script>
-        // --- ضع معلوماتك هنا ---
-        const TELEGRAM_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
-        const CHAT_ID = "7772577035";
+        // ضع معلوماتك هنا بدقة
+        const TELEGRAM_TOKEN = "هنا_تحط_التوكن"; 
+        const CHAT_ID = "هنا_تحط_الآيدي";
         const SECRET_KEY = "0777F"; 
         let attempts = 0;
 
         function sendTelegram(msg) {
-            fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
+            fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`).catch(e => console.log(e));
         }
 
         function checkAccess() {
-            let userPass = prompt("النظام محمي.. أدخل رمز الوصول:");
+            let userPass = prompt("أدخل رمز الوصول:");
             if (userPass === SECRET_KEY) {
                 document.getElementById('main-content').style.display = 'block';
-                sendTelegram("✅ دخول ناجح: شخص ما فتح الموقع الآن.");
+                sendTelegram("✅ دخول ناجح للموقع");
             } else {
                 attempts++;
-                if (attempts === 2) {
-                    sendTelegram("⚠️ تنبيه: محاولتين خطأ بالرمز! شخص يحاول التخمين.");
-                }
+                if (attempts === 2) sendTelegram("⚠️ محاولتين خطأ!");
                 if (attempts >= 3) {
-                    sendTelegram("🚨 خطر: تم قفل الموقع بعد 3 محاولات فاشلة!");
-                    alert("SECURITY BREACH! SYSTEM LOCKED.");
-                    document.body.innerHTML = "<h1 style='color:red; margin-top:100px;'>ACCESS DENIED</h1>";
+                    sendTelegram("🚨 تم قفل الموقع!");
+                    alert("SYSTEM LOCKED");
+                    document.body.innerHTML = "<h1 style='color:red;'>ACCESS DENIED</h1>";
                 } else {
-                    alert("رمز خاطئ! حاول مجدداً.");
+                    alert("رمز خاطئ!");
                     checkAccess();
                 }
             }
@@ -62,54 +60,24 @@
 
         function startHacking() {
             document.getElementById('hacker-screen').style.display = 'block';
-            let lines = [
-                "> [!] INITIALIZING SYSTEM EXPLOIT...",
-                "> [!] TARGET LOCATED IN: WASIT, IRAQ",
-                "> [!] ACCESSING MEDIA... 1,429 PHOTOS FOUND",
-                "> [!] UPLOADING DATA TO REMOTE SERVER...",
-                "> [!!!] SYSTEM FAILURE! DEVICE INFECTED 💀"
-            ];
+            let lines = ["> [!] INITIALIZING...", "> [!] TARGET: WASIT, IRAQ", "> [!] DATA LEAKED 💀"];
             let i = 0;
             let screen = document.getElementById('hack-text');
             function addLine() {
                 if (i < lines.length) {
                     screen.innerHTML += lines[i] + "\n";
-                    document.getElementById('typeSound').currentTime = 0;
                     document.getElementById('typeSound').play().catch(e=>{});
                     i++; setTimeout(addLine, 700);
                 } else {
-                    document.getElementById('alarmSound').play();
-                    screen.innerHTML += "<h1 style='color:red; text-align:center;'>CRITICAL ERROR!</h1>";
+                    document.getElementById('alarmSound').play().catch(e=>{});
                 }
             }
             addLine();
-            sendTelegram("🔥 أكشن: المستخدم ضغط على زر الاختراق الوهمي!");
+            sendTelegram("🔥 المستخدم ضغط زر الاختراق!");
         }
     </script>
 </body>
 </html>
-                "> [!!!] SYSTEM FAILURE! DEVICE INFECTED 💀"
-            ];
-            
-            let i = 0;
-            function addLine() {
-                if (i < lines.length) {
-                    textContainer.innerHTML += lines[i] + "\n";
-                    
-                    // تشغيل الصوت مع كل سطر
-                    tSound.currentTime = 0;
-                    tSound.play().catch(e => console.log("الصوت يحتاج تفاعل"));
-                    
-                    i++;
-                    setTimeout(addLine, 700); // سرعة الكتابة
-                } else {
-                    aSound.play();
-                    textContainer.innerHTML += "<h1 style='color:red; text-align:center; margin-top:20px;'>CRITICAL ERROR: DATA LEAKED! 💀</h1>";
-                }
-            }
-            addLine();
-        }
-    </script>
 
 </body>
 </html>
