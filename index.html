@@ -3,104 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SECURE TERMINAL | v8.0</title>
+    <title>CORE TERMINAL v10.0 | RESTRICTED AREA</title>
     <style>
-        * { -webkit-user-select: none; user-select: none; box-sizing: border-box; }
-        body { background: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; text-align: center; padding: 20px; overflow-x: hidden; }
-        .video-container { margin: 20px auto; max-width: 400px; border: 2px solid #00ff00; box-shadow: 0 0 20px #00ff00; border-radius: 15px; overflow: hidden; background: #111; }
-        .btn-hack { background: transparent; color: #ff0000; border: 2px solid #ff0000; padding: 15px 30px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: bold; box-shadow: 0 0 10px #ff0000; border-radius: 5px; }
-        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: #0f0; padding: 30px 20px; text-align: left; z-index: 9999; font-size: 13px; overflow-y: auto; white-space: pre-wrap; line-height: 1.5; }
+        * { -webkit-user-select: none; user-select: none; box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; overflow: hidden; height: 100vh; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.25; }
+        .container { position: relative; z-index: 1; padding: 20px; text-align: center; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* واجهة Terminal الجديدة */
+        .terminal-display {
+            width: 100%; max-width: 420px; height: 250px;
+            background: rgba(0,20,0,0.8); border: 2px solid #0f0;
+            border-radius: 10px; box-shadow: 0 0 25px rgba(0,255,0,0.4);
+            margin: 20px 0; padding: 15px; text-align: left;
+            font-size: 13px; overflow-y: auto; line-height: 1.4;
+        }
+        .terminal-display span { display: block; }
+        .status { color: #fff; font-weight: bold; }
+        .error { color: #f00; font-weight: bold; }
+        .blink { animation: blinker 1s linear infinite; color: #fff; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        .btn-hack {
+            background: rgba(255,0,0,0.2); color: #ff0000;
+            border: 2px solid #ff0000; padding: 15px 30px; font-size: 17px;
+            cursor: pointer; font-weight: bold; box-shadow: 0 0 20px #ff0000;
+            border-radius: 5px; text-transform: uppercase;
+            letter-spacing: 1px; transition: 0.3s;
+        }
+        .btn-hack:hover { background: rgba(255,0,0,0.4); box-shadow: 0 0 30px #ff0000; }
+
+        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; padding: 30px; text-align: left; z-index: 9999; font-size: 13px; overflow-y: auto; white-space: pre-wrap; line-height: 1.6; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div id="main-content" style="display:none;">
-        <h1 style="text-shadow: 0 0 15px #00ff00;">نظام الوصول المشفر 🛡️</h1>
-        <div class="video-container">
-            <iframe src="https://www.instagram.com/reel/DT5Ht6zjAOY/embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+    <canvas id="matrix"></canvas>
+
+    <div id="main-content" class="container" style="display:none;">
+        <h1 style="text-shadow: 0 0 20px #0f0; margin-bottom: 5px; font-size: 26px;">SYSTEM ACCESS GRANTED 🛡️</h1>
+        <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">CORE TERMINAL | WASIT SECURITY HQ | v10.0</p>
+
+        <div class="terminal-display">
+            <span class="status">[STATUS] Terminal session opened at ${new Date().toLocaleTimeString()}</span>
+            <span>> Kernel security layers bypass... <span style='color:#0f0'>[OK]</span></span>
+            <span>> Connecting to Global Proxy... <span style='color:#0f0'>[DONE]</span></span>
+            <span>> Geolocation data: IQ, Wasit, Aziziyah</span>
+            <span id="fake-ip-display"></span>
+            <span class="error">> Critical system error detected! [Code 0x7F2] <span class="blink">●</span></span>
+            <span class="error">> Root partition access: Locked.</span>
+            <span>> Full data exfiltration requires protocol activation.</span>
+            <span class="blink" style='margin-top:10px'>> Waiting for Core Command...</span>
         </div>
-        <button class="btn-hack" onclick="startHacking()">تفعيل البروتوكول السري ⚡</button>
+
+        <button class="btn-hack" onclick="startHacking()">ACTIVATE BREACH PROTOCOL ⚡</button>
     </div>
 
     <div id="hacker-screen"><div id="hack-text"></div></div>
-    
+
     <audio id="typeSound" src="https://www.soundjay.com/communication/typewriter-key-1.mp3" preload="auto"></audio>
     <audio id="alarmSound" src="https://www.soundjay.com/buttons/beep-01a.mp3" preload="auto"></audio>
 
     <script>
-        // ==========================================
-        // ⚠️ ضع معلوماتك هنا بين علامات الاقتباس ""
-        // ==========================================
+        // --- ضع معلوماتك هنا بين علامات الاقتباس "" ---
         const TELEGRAM_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
         const CHAT_ID = "7772577035";
         const SECRET_KEY = "0777F"; 
-        // ==========================================
 
-        let attempts = 0;
-
-        function sendTelegram(msg) {
+        // دالة إرسال التنبيه المفصل للتلجرام
+        function sendAlert(status) {
+            let info = `Target Platform: ${navigator.platform}\nUser Agent: ${navigator.userAgent}`;
+            let msg = `🚨 تنبيه من Core Terminal:\nالحالة: ${status}\nالمنصة: ${info}`;
             fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
         }
 
-        function checkAccess() {
-            let userPass = prompt("النظام محمي.. أدخل رمز الوصول:");
-            if (userPass === SECRET_KEY) {
-                document.getElementById('main-content').style.display = 'block';
-                sendTelegram("✅ شخص ما دخل للموقع الآن بالرمز الصحيح.");
-            } else {
-                attempts++;
-                if (attempts === 2) sendTelegram("⚠️ تحذير: شخص حاول مرتين بالرمز وخطأ!");
-                if (attempts >= 3) {
-                    sendTelegram("🚨 خطر: تم قفل الموقع بوجه شخص بعد 3 محاولات!");
-                    alert("SECURITY BREACH! SYSTEM LOCKED.");
-                    document.body.innerHTML = "<h1 style='color:red; margin-top:100px;'>ACCESS DENIED</h1>";
-                } else {
-                    alert("الرمز خطأ! حاول مجدداً.");
-                    checkAccess();
-                }
+        // نظام تأثير المصفوفة (Matrix Effect)
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#$%^&*()";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0f0";
+            ctx.font = fontSize + "px arial";
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
             }
         }
+        setInterval(drawMatrix, 40);
 
-        window.onload = checkAccess;
+        // نظام الوصول والتحقق
+        window.onload = function() {
+            // توليد آيبي وهمي لعرضه بالشاشة
+            document.getElementById('fake-ip-display').innerText = `> Local IP address: ${Math.floor(Math.random() * 255)}.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
 
+            let userPass = prompt("RESTRICTED AREA: ENTER SECURITY KEY");
+            if (userPass === SECRET_KEY) {
+                document.getElementById('main-content').style.display = 'flex';
+                sendAlert("✅ دخول ناجح للمقر الرئيسي.");
+            } else {
+                sendAlert("❌ محاولة دخول فاشلة للمقر.");
+                alert("ACCESS DENIED: Credentials not recognized.");
+                document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:200px;'>CORE TERMINAL LOCKED<br>SECURITY BREACH LOGGED</h1>";
+            }
+        };
+
+        // دالة المقلب الصوتي والبصري العميقة
         function startHacking() {
             document.getElementById('hacker-screen').style.display = 'block';
             let lines = [
-                "> [!] INITIALIZING SYSTEM EXPLOIT v8.2...",
-                "> [!] CONNECTING TO GLOBAL PROXY... [DONE]",
-                "> [!] BYPASSING KERNEL FIREWALL... [DONE]",
-                "> [!] TARGET IP: 192.168.1.104 [LOCATED]",
-                "> [!] SEARCHING FOR MEDIA DIRECTORY...",
-                "> [!] 1,429 PHOTOS FOUND. UPLOADING...",
-                "> [!] ACCESSING CONTACT LIST... [SUCCESS]",
-                "> [!] WHATSAPP BACKUP EXTRACTED...",
-                "> [!] FRONT CAMERA: ACTIVATED [REC]",
-                "> [!] TARGET LOCATED IN: WASIT, IRAQ",
-                "> [!] SENDING DATA TO REMOTE SERVER...",
-                "> [!] ENCRYPTING SYSTEM FILES... 45%",
-                "> [!] ENCRYPTING SYSTEM FILES... 89%",
-                "> [!] SYSTEM OVERHEAT! TEMP: 110°C",
-                "> [!] SELF-DESTRUCT INITIATED...",
+                "> INITIALIZING CORE BREACH PROTOCOL v10.0...",
+                "> EXPLOITING KERNEL VULNERABILITIES... [OK]",
+                `> TARGET HARDWARE: ${navigator.platform} detected`,
+                "> LOCATING IP GEOLOCATION... Wasit, IQ [98% ACCURACY]",
+                "> OPENING CLOUD STORAGE: 1,429 PHOTOS DETECTED",
+                "> BEGINNING EXFILTRATION... [5%]",
+                "> WHATSAPP BACKUP EXTRACTED...",
+                "> CONTACT LIST ACCESS: SUCCESS",
+                "> REMOTE SHELL ON PORT 8080: ACTIVE",
+                "> CORE TEMPERATURE: 115°C [CRITICAL]",
+                "> SYSTEM STABILITY: FAILING",
                 "> 5...", "> 4...", "> 3...", "> 2...", "> 1...",
-                "> [!!!] SYSTEM FAILURE! DEVICE INFECTED 💀"
+                "> [!!!] TOTAL SYSTEM COLLAPSE 💀"
             ];
             
             let i = 0;
-            let screen = document.getElementById('hack-text');
+            let screenContainer = document.getElementById('hack-text');
             function addLine() {
                 if (i < lines.length) {
-                    screen.innerHTML += lines[i] + "\n";
+                    screenContainer.innerHTML += lines[i] + "\n";
                     document.getElementById('typeSound').currentTime = 0;
                     document.getElementById('typeSound').play().catch(e=>{});
-                    i++; 
-                    setTimeout(addLine, 600); 
+                    i++; setTimeout(addLine, 600);
                 } else {
-                    document.getElementById('alarmSound').play().catch(e=>{});
-                    screen.innerHTML += "<h1 style='color:red; text-align:center;'>CRITICAL ERROR: DATA LEAKED! 💀</h1>";
+                    document.getElementById('alarmSound').play();
+                    sendAlert("🔥 العميل نفذ بروتوكول الاختراق الوهمي.");
+                    screenContainer.innerHTML += "<h1 style='color:red; text-align:center;'>CRITICAL ERROR! DATA LEAKED! 💀</h1>";
                 }
             }
             addLine();
-            sendTelegram("🔥 أكشن: المستخدم ضغط على زر الاختراق الوهمي!");
         }
     </script>
 </body>
