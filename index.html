@@ -3,54 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الاختراق الآمن</title>
+    <title>SYSTEM BREACH</title>
     <style>
-        body { 
-            background: #000; 
-            color: #00ff00; 
-            font-family: 'Courier New', Courier, monospace; 
-            text-align: center; 
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        .video-container {
-            margin: 20px auto;
-            max-width: 600px;
-            border: 2px solid #00ff00;
-            box-shadow: 0 0 15px #00ff00;
-        }
-
-        .btn-hack {
-            background: transparent;
-            color: #ff0000;
-            border: 2px solid #ff0000;
-            padding: 15px 30px;
-            font-size: 20px;
-            cursor: pointer;
-            margin-top: 20px;
-            font-weight: bold;
-            box-shadow: 0 0 10px #ff0000;
-        }
-
-        /* شاشة الاختراق الوهمية */
+        body { background: #000; color: #00ff00; font-family: 'Courier New', monospace; text-align: center; padding: 20px; overflow: hidden; }
+        .video-container { margin: 20px auto; max-width: 600px; border: 2px solid #00ff00; box-shadow: 0 0 15px #00ff00; }
+        .btn-hack { background: transparent; color: #ff0000; border: 2px solid #ff0000; padding: 15px 30px; font-size: 20px; cursor: pointer; margin-top: 20px; font-weight: bold; box-shadow: 0 0 10px #ff0000; border-radius: 5px; }
+        
         #hacker-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: black;
-            color: #0f0;
-            padding: 20px;
-            text-align: left;
-            z-index: 9999;
-            font-size: 14px;
-            overflow: hidden;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; color: #0f0; padding: 20px; text-align: left; z-index: 9999;
+            font-size: 13px; overflow-y: auto; white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
 
-    <h1 id="main-title">نظام التشغيل المشفر 💀</h1>
+    <h1 style="text-shadow: 0 0 10px #00ff00;">نظام التشغيل المشفر 💀</h1>
 
     <div class="video-container">
         <iframe width="100%" height="250" src="https://www.youtube.com/embed/N1l7T-Am-qc" frameborder="0" allowfullscreen></iframe>
@@ -62,42 +30,52 @@
         <div id="hack-text"></div>
     </div>
 
+    <audio id="typeSound" src="https://www.soundjay.com/communication/typewriter-key-1.mp3"></audio>
+    <audio id="alarmSound" src="https://www.soundjay.com/buttons/beep-01a.mp3"></audio>
+
     <script>
-        // نظام كلمة السر
         var password = "0777F";
         var input = prompt("النظام مغلق.. أدخل رمز التفعيل:");
         if (input != password) {
-            alert("محاولة دخول غير مصرح بها!");
+            alert("تم رصد محاولة اختراق!");
             document.body.innerHTML = "<h1 style='color:red;'>ACCESS DENIED</h1>";
         }
 
-        // خدعة الاختراق
         function startHacking() {
             document.getElementById('hacker-screen').style.display = 'block';
             let lines = [
-                "> INITIALIZING EXPLOIT...",
-                "> CONNECTING TO SERVER: 192.168.1.104",
-                "> BYPASSING FIREWALL... [DONE]",
-                "> DOWNLOADING SYSTEM DATA... 12%",
-                "> DOWNLOADING SYSTEM DATA... 45%",
-                "> DOWNLOADING SYSTEM DATA... 89%",
-                "> CRITICAL ERROR: SECURITY BREACH DETECTED!",
-                "> UPLOADING VIRUS TO LOCAL STORAGE...",
-                "> ACCESSING PHOTOS & MESSAGES...",
-                "> DEVICE OVERHEAT IN 3.. 2.. 1..",
-                "> SYSTEM FAILURE! GOODBYE."
+                "> [!] INITIALIZING SYSTEM EXPLOIT...",
+                "> [!] TARGET IP: 192.168.1.104 [LOCATED]",
+                "> [!] BYPASSING LOCAL FIREWALL...",
+                "> [!] ACCESSING KERNEL MEMORY... [OK]",
+                "> [!] SEARCHING FOR MEDIA FILES...",
+                "> [!] 1,429 PHOTOS FOUND. UPLOADING TO CLOUD...",
+                "> [!] ACCESSING CONTACT LIST... [SUCCESS]",
+                "> [!] EXTRACTING WHATSAPP BACKUP...",
+                "> [!] ENCRYPTING LOCAL DISK C:/...",
+                "> [!] ACTIVATING FRONT CAMERA... [DONE]",
+                "> [!] SENDING GPS COORDINATES TO REMOTE SERVER...",
+                "> [!] TARGET LOCATED IN: WASIT, IRAQ",
+                "> [!] SYSTEM OVERHEAT DETECTED! [105°C]",
+                "> [!] SELF-DESTRUCT SEQUENCE INITIATED...",
+                "> 5...", "> 4...", "> 3...", "> 2...", "> 1...",
+                "> [!!!] SYSTEM FAILURE! DEVICE INFECTED 💀"
             ];
             
             let i = 0;
             let screen = document.getElementById('hack-text');
-            
+            let tSound = document.getElementById('typeSound');
+            let aSound = document.getElementById('alarmSound');
+
             function addLine() {
                 if (i < lines.length) {
-                    screen.innerHTML += lines[i] + "<br>";
+                    screen.innerHTML += lines[i] + "\n";
+                    tSound.play(); // تشغيل صوت التكتكة مع كل سطر
                     i++;
-                    setTimeout(addLine, 400); // سرعة الكتابة
+                    setTimeout(addLine, 800); // جعل العملية أبطأ (800ms بين كل سطر)
                 } else {
-                    screen.innerHTML += "<h1 style='color:red; text-align:center;'>DEVICE INFECTED! 💀</h1>";
+                    aSound.play(); // تشغيل صوت الإنذار بالنهاية
+                    screen.innerHTML += "<h1 style='color:red; text-align:center;'>CRITICAL ERROR: DATA LEAKED! 💀</h1>";
                 }
             }
             addLine();
