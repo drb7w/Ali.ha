@@ -2,133 +2,142 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL | DIGITAL PROFILER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ALI-OS | v.999999.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #000;
-            color: #0f0;
-            font-family: 'Share Tech Mono', 'Cairo', monospace;
-            margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 100vh;
+        :root { --neon: #00f3ff; --danger: #ff003c; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; font-family: 'Orbitron', 'Cairo', sans-serif; overflow: hidden; color: var(--neon); }
+        
+        /* تأثير Matrix في الخلفية */
+        #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+
+        /* شاشة التحميل الفخمة */
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 10000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
         }
+        .loader { width: 250px; height: 5px; background: #111; position: relative; margin-top: 20px; overflow: hidden; border: 1px solid var(--neon); }
+        .progress { position: absolute; height: 100%; background: var(--neon); width: 0; animation: load 4s forwards; box-shadow: 0 0 15px var(--neon); }
+        @keyframes load { 0% { width: 0; } 100% { width: 100%; } }
 
-        /* تأثير الخطوط في الخلفية */
-        .scanline {
-            width: 100%; height: 100px;
-            z-index: 10;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 255, 0, 0.1) 50%, rgba(0, 0, 0, 0) 100%);
-            opacity: 0.1;
-            position: fixed;
-            bottom: 100%;
-            animation: scanline 6s linear infinite;
+        /* سطح المكتب */
+        #desktop { display: none; height: 100%; padding: 20px; box-sizing: border-box; background: radial-gradient(circle, #001a1a 0%, #000 100%); }
+        
+        .icon { width: 80px; text-align: center; margin-bottom: 30px; cursor: pointer; transition: 0.3s; }
+        .icon:active { transform: scale(0.9); }
+        .icon img { width: 50px; filter: drop-shadow(0 0 5px var(--neon)); }
+        .icon span { display: block; font-size: 10px; margin-top: 5px; color: #fff; }
+
+        /* النوافذ */
+        .window {
+            position: absolute; top: 20%; left: 10%; width: 80%;
+            background: rgba(0, 10, 10, 0.9); border: 1px solid var(--neon);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); display: none; z-index: 100;
         }
-        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100%; } }
+        .win-header { background: var(--neon); color: #000; padding: 5px 10px; font-weight: 900; font-size: 12px; display: flex; justify-content: space-between; }
+        .win-content { padding: 15px; font-size: 13px; color: #fff; line-height: 1.6; }
 
-        .terminal {
-            max-width: 600px;
-            margin: 0 auto;
-            border: 1px solid #0f0;
-            padding: 20px;
-            background: rgba(0, 20, 0, 0.9);
-            box-shadow: 0 0 20px #0f0;
-            position: relative;
+        /* شريط المهام السفلي */
+        #taskbar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 45px;
+            background: rgba(0, 0, 0, 0.8); border-top: 1px solid var(--neon);
+            display: flex; align-items: center; padding: 0 15px; box-sizing: border-box;
         }
-
-        .header { border-bottom: 1px solid #0f0; margin-bottom: 15px; padding-bottom: 10px; color: #fff; }
-        .typing { overflow: hidden; white-space: nowrap; border-right: 2px solid #0f0; animation: typing 3s steps(40, end), blink 0.7s infinite; }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #0f0 } }
-
-        .data-row { margin: 10px 0; font-size: 14px; opacity: 0; transform: translateX(-20px); transition: 0.5s; }
-        .data-row.show { opacity: 1; transform: translateX(0); }
-        .label { color: #888; }
-        .value { color: #ff0; font-weight: bold; }
-
-        .radar {
-            width: 100px; height: 100px;
-            border: 2px solid #0f0; border-radius: 50%;
-            margin: 20px auto; position: relative;
-            background: radial-gradient(circle, rgba(0,255,0,0.1) 0%, transparent 80%);
-        }
-        .radar::after {
-            content: ""; position: absolute; width: 50%; height: 2px;
-            background: #0f0; top: 50%; left: 50%;
-            transform-origin: left; animation: rotate 2s linear infinite;
-        }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .warning { color: red; font-weight: bold; text-align: center; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="scanline"></div>
+    <canvas id="canvas"></canvas>
 
-    <div class="terminal">
-        <div class="header">
-            <div class="typing">> جارٍ تحليل البصمة الرقمية للزائر...</div>
+    <div id="boot-screen">
+        <h2 style="letter-spacing: 5px;">ALI CORE SYSTEMS</h2>
+        <p style="font-size: 12px; color: #888;">INITIALIZING V.999999.0...</p>
+        <div class="loader"><div class="progress"></div></div>
+        <p id="boot-log" style="font-size: 10px; margin-top: 10px;"></p>
+    </div>
+
+    <div id="desktop">
+        <div class="icon" onclick="openWin('files')">
+            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png">
+            <span>الملفات السرية</span>
+        </div>
+        <div class="icon" onclick="openWin('spy')">
+            <img src="https://cdn-icons-png.flaticon.com/512/2592/2592323.png">
+            <span>كاميرا التجسس</span>
+        </div>
+        <div class="icon" onclick="openWin('id')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067256.png">
+            <span>بصمة الزائر</span>
         </div>
 
-        <div class="radar"></div>
-
-        <div id="results">
-            <div class="data-row" id="row-1"><span class="label">> نظام التشغيل:</span> <span class="value" id="os">جاري الفحص...</span></div>
-            <div class="data-row" id="row-2"><span class="label">> المتصفح:</span> <span class="value" id="browser">جاري الفحص...</span></div>
-            <div class="data-row" id="row-3"><span class="label">> دقة الشاشة:</span> <span class="value" id="screen">جاري الفحص...</span></div>
-            <div class="data-row" id="row-4"><span class="label">> التوقيت المحلي:</span> <span class="value" id="time">جاري الفحص...</span></div>
-            <div class="data-row" id="row-5"><span class="label">> حالة البطارية:</span> <span class="value" id="battery">جاري الفحص...</span></div>
-            <div class="data-row" id="row-6"><span class="label">> معالج الجهاز:</span> <span class="value" id="cores">جاري الفحص...</span></div>
-            <div class="data-row" id="row-7"><span class="label">> الـ IP التقريبي:</span> <span class="value" id="ip">جاري الاستدعاء...</span></div>
+        <div id="files" class="window">
+            <div class="win-header"><span>SECRET_FILES.LOG</span><span onclick="closeWin('files')">X</span></div>
+            <div class="win-content">
+                > تم العثور على 152 صورة مخفية...<br>
+                > جاري استخراج محادثات الواتساب...<br>
+                <span style="color:red">! خطأ: الذاكرة ممتلئة ببيانات الضحية !</span>
+            </div>
         </div>
 
-        <div class="warning" id="warning-msg">! تحذير: تم تسجيل بصمة جهازك في قاعدة بيانات المحقق !</div>
+        <div id="id" class="window">
+            <div class="win-header"><span>VISITOR_ID</span><span onclick="closeWin('id')">X</span></div>
+            <div class="win-content" id="visitor-data">
+                جاري سحب الهوية الرقمية...
+            </div>
+        </div>
+
+        <div id="taskbar">
+            <span style="font-weight: 900; color: var(--neon);">ALI_OS</span>
+            <span id="clock" style="margin-right: auto; font-size: 12px;">00:00</span>
+        </div>
     </div>
 
     <script>
-        window.onload = async function() {
-            // سحب معلومات البطارية
-            let batteryStatus = "غير معروف";
-            try {
-                const battery = await navigator.getBattery();
-                batteryStatus = `${Math.round(battery.level * 100)}% (${battery.charging ? 'جاري الشحن' : 'تفريغ'})`;
-            } catch(e) {}
+        // تأثير Matrix
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0f0"; ctx.font = fontSize + "px arial";
+            drops.forEach((y, i) => {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(draw, 33);
 
-            // سحب الـ IP
-            let ipAddr = "مخفي/محمي";
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                ipAddr = data.ip;
-            } catch(e) {}
+        // التحكم بالنظام
+        setTimeout(() => {
+            document.getElementById('boot-screen').style.display = 'none';
+            document.getElementById('desktop').style.display = 'block';
+            loadData();
+        }, 4500);
 
-            // تعبئة البيانات
-            document.getElementById('os').innerText = navigator.platform;
-            document.getElementById('browser').innerText = navigator.userAgent.split(' ').pop();
-            document.getElementById('screen').innerText = `${window.screen.width}x${window.screen.height}`;
-            document.getElementById('time').innerText = new Date().toLocaleTimeString('ar-EG');
-            document.getElementById('battery').innerText = batteryStatus;
-            document.getElementById('cores').innerText = `${navigator.hardwareConcurrency || '??'} نواتج معالجة`;
-            document.getElementById('ip').innerText = ipAddr;
+        function openWin(id) { document.getElementById(id).style.display = 'block'; }
+        function closeWin(id) { document.getElementById(id).style.display = 'none'; }
 
-            // إظهار الصفوف بالتدريج (تأثير درامي)
-            for (let i = 1; i <= 7; i++) {
-                setTimeout(() => {
-                    document.getElementById(`row-${i}`).classList.add('show');
-                }, i * 700);
-            }
+        async function loadData() {
+            const ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"SECURED"}));
+            document.getElementById('visitor-data').innerHTML = `
+                IP: <span style="color:yellow">${ip.ip}</span><br>
+                SYS: ${navigator.platform}<br>
+                BAT: جاري الاستنزاف...<br>
+                LOC: WASIT_V_NET
+            `;
+        }
 
-            // إظهار التحذير في النهاية
-            setTimeout(() => {
-                document.getElementById('warning-msg').style.display = 'block';
-            }, 6000);
-        };
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('ar-EG');
+        }, 1000);
     </script>
 </body>
 </html>
