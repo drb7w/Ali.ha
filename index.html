@@ -3,113 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM BREACH | 0777F</title>
+    <title>SECURE TERMINAL v7.0</title>
     <style>
-        body { 
-            background: #000; 
-            color: #00ff00; 
-            font-family: 'Courier New', Courier, monospace; 
-            text-align: center; 
-            padding: 20px; 
-            overflow-x: hidden; 
-        }
-        .video-container { 
-            margin: 20px auto; 
-            max-width: 400px; 
-            border: 2px solid #00ff00; 
-            box-shadow: 0 0 20px #00ff00;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #111;
-        }
-        .btn-hack { 
-            background: transparent; 
-            color: #ff0000; 
-            border: 2px solid #ff0000; 
-            padding: 15px 30px; 
-            font-size: 18px; 
-            cursor: pointer; 
-            margin-top: 25px; 
-            font-weight: bold; 
-            box-shadow: 0 0 10px #ff0000; 
-            border-radius: 5px;
-            text-transform: uppercase;
-        }
-        #hacker-screen {
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: black; 
-            color: #0f0; 
-            padding: 30px 20px; 
-            text-align: left; 
-            z-index: 9999;
-            font-size: 14px; 
-            overflow-y: auto; 
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
+        * { -webkit-user-select: none; user-select: none; }
+        body { background: #000; color: #00ff00; font-family: 'Courier New', monospace; text-align: center; padding: 20px; overflow-x: hidden; }
+        .video-container { margin: 20px auto; max-width: 400px; border: 2px solid #00ff00; box-shadow: 0 0 20px #00ff00; border-radius: 15px; overflow: hidden; background: #111; }
+        .btn-hack { background: transparent; color: #ff0000; border: 2px solid #ff0000; padding: 15px 30px; font-size: 18px; cursor: pointer; margin-top: 25px; font-weight: bold; box-shadow: 0 0 10px #ff0000; border-radius: 5px; }
+        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; color: #0f0; padding: 30px 20px; text-align: left; z-index: 9999; font-size: 14px; overflow-y: auto; white-space: pre-wrap; line-height: 1.6; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <h1 style="text-shadow: 0 0 15px #00ff00;">المقر الرئيسي المشفر 💀</h1>
-
-    <div class="video-container">
-        <iframe 
-            src="https://www.instagram.com/reel/DT5Ht6zjAOY/embed" 
-            width="100%" 
-            height="480" 
-            frameborder="0" 
-            scrolling="no" 
-            allowtransparency="true">
-        </iframe>
+    <div id="main-content" style="display:none;">
+        <h1 style="text-shadow: 0 0 15px #00ff00;">نظام الوصول المشفر 🛡️</h1>
+        <div class="video-container">
+            <iframe src="https://www.instagram.com/reel/DT5Ht6zjAOY/embed" width="100%" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+        </div>
+        <button class="btn-hack" onclick="startHacking()">تفعيل البروتوكول السري ⚡</button>
     </div>
 
-    <button class="btn-hack" onclick="startHacking()">تفعيل البروتوكول السري ⚡</button>
-
-    <div id="hacker-screen">
-        <div id="hack-text"></div>
-    </div>
-
+    <div id="hacker-screen"><div id="hack-text"></div></div>
     <audio id="typeSound" src="https://www.soundjay.com/communication/typewriter-key-1.mp3" preload="auto"></audio>
     <audio id="alarmSound" src="https://www.soundjay.com/buttons/beep-01a.mp3" preload="auto"></audio>
 
     <script>
-        // نظام حماية الدخول
-        var password = "0777F";
-        var input = prompt("النظام مغلق.. أدخل رمز التفعيل الخاص بك:");
-        if (input != password) {
-            alert("تم رصد محاولة اختراق خارجية! الدخول مرفوض.");
-            document.body.innerHTML = "<h1 style='color:red; margin-top:100px;'>ACCESS DENIED<br>IP LOGGED</h1>";
+        // --- ضع معلوماتك هنا ---
+        const TELEGRAM_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
+        const CHAT_ID = "7772577035";
+        const SECRET_KEY = "0777F"; 
+        let attempts = 0;
+
+        function sendTelegram(msg) {
+            fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
         }
 
-        // دالة المقلب الصوتي والبصري
+        function checkAccess() {
+            let userPass = prompt("النظام محمي.. أدخل رمز الوصول:");
+            if (userPass === SECRET_KEY) {
+                document.getElementById('main-content').style.display = 'block';
+                sendTelegram("✅ دخول ناجح: شخص ما فتح الموقع الآن.");
+            } else {
+                attempts++;
+                if (attempts === 2) {
+                    sendTelegram("⚠️ تنبيه: محاولتين خطأ بالرمز! شخص يحاول التخمين.");
+                }
+                if (attempts >= 3) {
+                    sendTelegram("🚨 خطر: تم قفل الموقع بعد 3 محاولات فاشلة!");
+                    alert("SECURITY BREACH! SYSTEM LOCKED.");
+                    document.body.innerHTML = "<h1 style='color:red; margin-top:100px;'>ACCESS DENIED</h1>";
+                } else {
+                    alert("رمز خاطئ! حاول مجدداً.");
+                    checkAccess();
+                }
+            }
+        }
+
+        window.onload = checkAccess;
+
         function startHacking() {
-            var screen = document.getElementById('hacker-screen');
-            var textContainer = document.getElementById('hack-text');
-            var tSound = document.getElementById('typeSound');
-            var aSound = document.getElementById('alarmSound');
-
-            screen.style.display = 'block';
-
+            document.getElementById('hacker-screen').style.display = 'block';
             let lines = [
-                "> [!] INITIALIZING SYSTEM EXPLOIT v4.0...",
-                "> [!] TARGET IP: 192.168.1.104 [LOCATED]",
-                "> [!] BYPASSING LOCAL FIREWALL... [DONE]",
-                "> [!] ACCESSING KERNEL MEMORY... [OK]",
-                "> [!] SEARCHING FOR SENSITIVE FILES...",
-                "> [!] 1,429 PHOTOS DETECTED. UPLOADING...",
-                "> [!] EXTRACTING WHATSAPP DATABASE...",
-                "> [!] ACCESSING MICROPHONE... [ACTIVE]",
-                "> [!] ACTIVATING FRONT CAMERA... [DONE]",
+                "> [!] INITIALIZING SYSTEM EXPLOIT...",
                 "> [!] TARGET LOCATED IN: WASIT, IRAQ",
-                "> [!] SENDING DATA TO REMOTE SERVER...",
-                "> [!] ENCRYPTING ALL PERSONAL FOLDERS...",
-                "> [!] SYSTEM OVERHEAT DETECTED! [110°C]",
-                "> [!] HARD DRIVE DESTRUCTION: 85%...",
-                "> [!] SELF-DESTRUCT INITIATED...",
-                "> 5...", "> 4...", "> 3...", "> 2...", "> 1...",
+                "> [!] ACCESSING MEDIA... 1,429 PHOTOS FOUND",
+                "> [!] UPLOADING DATA TO REMOTE SERVER...",
+                "> [!!!] SYSTEM FAILURE! DEVICE INFECTED 💀"
+            ];
+            let i = 0;
+            let screen = document.getElementById('hack-text');
+            function addLine() {
+                if (i < lines.length) {
+                    screen.innerHTML += lines[i] + "\n";
+                    document.getElementById('typeSound').currentTime = 0;
+                    document.getElementById('typeSound').play().catch(e=>{});
+                    i++; setTimeout(addLine, 700);
+                } else {
+                    document.getElementById('alarmSound').play();
+                    screen.innerHTML += "<h1 style='color:red; text-align:center;'>CRITICAL ERROR!</h1>";
+                }
+            }
+            addLine();
+            sendTelegram("🔥 أكشن: المستخدم ضغط على زر الاختراق الوهمي!");
+        }
+    </script>
+</body>
+</html>
                 "> [!!!] SYSTEM FAILURE! DEVICE INFECTED 💀"
             ];
             
