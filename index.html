@@ -3,155 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALI | Digital Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>TERMINAL | DIGITAL PROFILER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Cairo:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #00ffcc; /* لون فسفوري */
-            --bg: #050505;
-        }
-
         body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Share Tech Mono', 'Cairo', monospace;
             margin: 0;
-            background-color: var(--bg);
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* خلفية متحركة بسيطة */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, #050505 25%, #0a0a0a 25%, #0a0a0a 50%, #050505 50%, #050505 75%, #0a0a0a 75%, #0a0a0a 100%);
-            background-size: 56.57px 56.57px;
-            z-index: -1;
-            opacity: 0.5;
-        }
-
-        .profile-card {
-            margin-top: 50px;
-            text-align: center;
-            padding: 30px;
-            width: 85%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.1);
-        }
-
-        .profile-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid var(--primary);
-            padding: 5px;
-            box-shadow: 0 0 20px var(--primary);
-            object-fit: cover;
-        }
-
-        h1 {
-            margin: 15px 0 5px 0;
-            font-size: 28px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--primary);
-        }
-
-        p.bio {
-            font-size: 14px;
-            color: #aaa;
-            margin-bottom: 25px;
-        }
-
-        .links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .link-btn {
-            display: block;
-            padding: 15px;
-            text-decoration: none;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            font-weight: 700;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .link-btn:hover {
-            background: var(--primary);
-            color: #000;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 255, 204, 0.3);
-        }
-
-        .skills-section {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .skill-badge {
-            font-size: 10px;
-            padding: 5px 12px;
-            background: rgba(0, 255, 204, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 20px;
-            color: var(--primary);
-        }
-
-        footer {
-            margin-top: auto;
             padding: 20px;
-            font-size: 10px;
-            color: #555;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
         }
+
+        /* تأثير الخطوط في الخلفية */
+        .scanline {
+            width: 100%; height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 255, 0, 0.1) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1;
+            position: fixed;
+            bottom: 100%;
+            animation: scanline 6s linear infinite;
+        }
+        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100%; } }
+
+        .terminal {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #0f0;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.9);
+            box-shadow: 0 0 20px #0f0;
+            position: relative;
+        }
+
+        .header { border-bottom: 1px solid #0f0; margin-bottom: 15px; padding-bottom: 10px; color: #fff; }
+        .typing { overflow: hidden; white-space: nowrap; border-right: 2px solid #0f0; animation: typing 3s steps(40, end), blink 0.7s infinite; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #0f0 } }
+
+        .data-row { margin: 10px 0; font-size: 14px; opacity: 0; transform: translateX(-20px); transition: 0.5s; }
+        .data-row.show { opacity: 1; transform: translateX(0); }
+        .label { color: #888; }
+        .value { color: #ff0; font-weight: bold; }
+
+        .radar {
+            width: 100px; height: 100px;
+            border: 2px solid #0f0; border-radius: 50%;
+            margin: 20px auto; position: relative;
+            background: radial-gradient(circle, rgba(0,255,0,0.1) 0%, transparent 80%);
+        }
+        .radar::after {
+            content: ""; position: absolute; width: 50%; height: 2px;
+            background: #0f0; top: 50%; left: 50%;
+            transform-origin: left; animation: rotate 2s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .warning { color: red; font-weight: bold; text-align: center; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="profile-card">
-        <img src="threat.jpg" alt="Ali" class="profile-img">
-        
-        <h1>ALI</h1>
-        <p class="bio">مطور واجهات | صانع محتوى تقني | إمبراطور البرمجة</p>
+    <div class="scanline"></div>
 
-        <div class="skills-section">
-            <span class="skill-badge">HTML/CSS</span>
-            <span class="skill-badge">AI Prompting</span>
-            <span class="skill-badge">Cybersecurity</span>
+    <div class="terminal">
+        <div class="header">
+            <div class="typing">> جارٍ تحليل البصمة الرقمية للزائر...</div>
         </div>
 
-        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
+        <div class="radar"></div>
 
-        <div class="links-container">
-            <a href="https://tiktok.com/@your_user" class="link-btn" target="_blank">le_dr313</a>
-            <a href="https://instagram.com/your_user" class="link-btn" target="_blank">drb7w</a>
-            <a href="https://github.com/drb7w" class="link-btn" target="_blank">مستودع الأكواد (GitHub) 💻</a>
-            <a href="mailto:your@email.com" class="link-btn">تواصل معي ✉️</a>
+        <div id="results">
+            <div class="data-row" id="row-1"><span class="label">> نظام التشغيل:</span> <span class="value" id="os">جاري الفحص...</span></div>
+            <div class="data-row" id="row-2"><span class="label">> المتصفح:</span> <span class="value" id="browser">جاري الفحص...</span></div>
+            <div class="data-row" id="row-3"><span class="label">> دقة الشاشة:</span> <span class="value" id="screen">جاري الفحص...</span></div>
+            <div class="data-row" id="row-4"><span class="label">> التوقيت المحلي:</span> <span class="value" id="time">جاري الفحص...</span></div>
+            <div class="data-row" id="row-5"><span class="label">> حالة البطارية:</span> <span class="value" id="battery">جاري الفحص...</span></div>
+            <div class="data-row" id="row-6"><span class="label">> معالج الجهاز:</span> <span class="value" id="cores">جاري الفحص...</span></div>
+            <div class="data-row" id="row-7"><span class="label">> الـ IP التقريبي:</span> <span class="value" id="ip">جاري الاستدعاء...</span></div>
         </div>
+
+        <div class="warning" id="warning-msg">! تحذير: تم تسجيل بصمة جهازك في قاعدة بيانات المحقق !</div>
     </div>
 
-    <footer>
-        DESIGNED BY ALI © 2026 | WASIT, IRAQ
-    </footer>
+    <script>
+        window.onload = async function() {
+            // سحب معلومات البطارية
+            let batteryStatus = "غير معروف";
+            try {
+                const battery = await navigator.getBattery();
+                batteryStatus = `${Math.round(battery.level * 100)}% (${battery.charging ? 'جاري الشحن' : 'تفريغ'})`;
+            } catch(e) {}
 
+            // سحب الـ IP
+            let ipAddr = "مخفي/محمي";
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                ipAddr = data.ip;
+            } catch(e) {}
+
+            // تعبئة البيانات
+            document.getElementById('os').innerText = navigator.platform;
+            document.getElementById('browser').innerText = navigator.userAgent.split(' ').pop();
+            document.getElementById('screen').innerText = `${window.screen.width}x${window.screen.height}`;
+            document.getElementById('time').innerText = new Date().toLocaleTimeString('ar-EG');
+            document.getElementById('battery').innerText = batteryStatus;
+            document.getElementById('cores').innerText = `${navigator.hardwareConcurrency || '??'} نواتج معالجة`;
+            document.getElementById('ip').innerText = ipAddr;
+
+            // إظهار الصفوف بالتدريج (تأثير درامي)
+            for (let i = 1; i <= 7; i++) {
+                setTimeout(() => {
+                    document.getElementById(`row-${i}`).classList.add('show');
+                }, i * 700);
+            }
+
+            // إظهار التحذير في النهاية
+            setTimeout(() => {
+                document.getElementById('warning-msg').style.display = 'block';
+            }, 6000);
+        };
+    </script>
 </body>
 </html>
