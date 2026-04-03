@@ -3,39 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NIGHT FURY | EMPERIAL OS</title>
+    <title>NIGHT FURY | FINAL ELITE</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --red: #ff0000; --bg: #000; --card-bg: #0a0a0a; --green: #00ff00; }
+        :root { --red: #ff0000; --bg: #000; --card-bg: #0a0a0a; --green: #00ff00; --border-glow: rgba(255, 0, 0, 0.3); }
         body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; user-select: none; }
         
-        /* تأثير التدمير الذاتي */
-        .purged { filter: bightness(0) !important; background: black !important; transition: 1s; }
-        
-        #GATE { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: 0.5s; }
-        .auth-box { border: 2px solid var(--red); padding: 30px; text-align: center; border-radius: 15px; width: 80%; max-width: 350px; background: #050505; }
-        .unit-id { background: #000; border: 1px solid var(--red); color: var(--red); padding: 15px; width: 80%; text-align: center; font-family: 'Orbitron'; font-size: 24px; margin-bottom: 20px; outline: none; }
-        
-        #DASHBOARD { display: none; padding: 20px; height: 100vh; overflow-y: auto; }
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .menu-item { background: var(--card-bg); border: 1px solid #222; height: 120px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; }
-        .menu-item span { font-size: 12px; font-weight: 900; margin-top: 8px; }
+        /* بوابة الدخول */
+        #GATE { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; }
+        .auth-box { border: 2px solid var(--red); padding: 30px; text-align: center; border-radius: 15px; width: 85%; max-width: 350px; background: #050505; box-shadow: 0 0 20px var(--border-glow); }
+        .unit-id { background: #000; border: 1px solid var(--red); color: var(--red); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 24px; margin-bottom: 20px; outline: none; border-radius: 8px; }
 
-        /* الرادار المتحرك */
-        .radar-box { width: 150px; height: 150px; border: 2px solid var(--green); border-radius: 50%; position: relative; margin: 20px auto; overflow: hidden; background: repeating-radial-gradient(circle, #001a00 0%, #001a00 10%, #003300 11%); }
-        .radar-sweep { position: absolute; width: 100%; height: 100%; background: conic-gradient(from 0deg, transparent 80%, rgba(0,255,0,0.4) 100%); animation: sweep 3s linear infinite; border-radius: 50%; }
+        /* الشاشة الرئيسية */
+        #DASHBOARD { display: none; padding: 20px; height: 100vh; overflow-y: auto; box-sizing: border-box; }
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .menu-item { 
+            background: var(--card-bg); border: 2px solid #222; height: 140px; border-radius: 15px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .menu-item:active { transform: scale(0.95); border-color: var(--red); box-shadow: 0 0 15px var(--border-glow); }
+        .menu-item span { font-size: 14px; font-weight: 900; margin-top: 10px; color: #ccc; }
+
+        /* الصفحات المنفصلة */
+        .sub-page { display: none; position: fixed; inset: 0; background: var(--bg); padding: 20px; z-index: 5000; overflow-y: auto; box-sizing: border-box; }
+        .page-header { display: flex; align-items: center; border-bottom: 2px solid var(--red); padding-bottom: 15px; margin-bottom: 20px; }
+        .btn-back { background: var(--red); border: none; color: white; padding: 8px 20px; border-radius: 5px; margin-left: 15px; font-weight: bold; cursor: pointer; }
+        
+        .list-item { background: #0e0e0e; border: 1px solid #222; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .bounty { color: var(--green); font-family: 'Orbitron'; font-weight: bold; }
+
+        /* الرادار */
+        .radar-box { width: 200px; height: 200px; border: 2px solid var(--green); border-radius: 50%; position: relative; margin: 40px auto; overflow: hidden; background: radial-gradient(circle, #001a00 0%, #000 70%); }
+        .radar-sweep { position: absolute; width: 100%; height: 100%; background: conic-gradient(from 0deg, transparent 80%, rgba(0,255,0,0.4) 100%); animation: sweep 4s linear infinite; border-radius: 50%; }
         @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .blip { width: 5px; height: 5px; background: red; position: absolute; border-radius: 50%; box-shadow: 0 0 10px red; }
-
-        .sub-page { display: none; position: fixed; inset: 0; background: var(--bg); padding: 20px; z-index: 5000; overflow-y: auto; }
-        .list-item { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 13px; }
         
-        /* شريط العمليات السفلي */
-        #OPS_BAR { position: fixed; bottom: 0; width: 100%; background: #111; font-size: 10px; padding: 5px; color: var(--red); border-top: 1px solid var(--red); white-space: nowrap; overflow: hidden; }
-        .scrolling-text { display: inline-block; animation: scroll 15s linear infinite; }
+        #OPS_BAR { position: fixed; bottom: 0; width: 100%; background: #050505; border-top: 1px solid var(--red); padding: 5px; font-size: 10px; color: var(--red); overflow: hidden; }
+        .scrolling { display: inline-block; white-space: nowrap; animation: scroll 20s linear infinite; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
     </style>
 </head>
@@ -43,41 +50,56 @@
 
     <div id="GATE">
         <div class="auth-box">
-            <h2 style="font-family:Orbitron; color:red;">NIGHT FURY v12</h2>
-            <p id="gate-step" style="font-size:10px; color:#444; margin-bottom:20px;">SYSTEM SECURED BY WASIT COMMAND</p>
+            <h2 style="font-family:Orbitron; color:red; margin:0;">NIGHT FURY</h2>
+            <p id="gate-info" style="font-size:10px; color:#555; margin-bottom:20px;">SECURITY LEVEL: EXTREME</p>
             <input type="password" id="unit_key" class="unit-id" placeholder="****" maxlength="4">
-            <button onclick="_0xAuth()" style="width:100%; background:red; color:white; border:none; padding:12px; font-weight:900; border-radius:5px;">AUTHORIZE</button>
+            <button onclick="_verify()" style="width:100%; background:red; color:white; border:none; padding:12px; font-weight:900; border-radius:5px; cursor:pointer;">ACCESS SYSTEM</button>
         </div>
     </div>
 
     <div id="DASHBOARD">
         <div style="text-align:center;">
-            <h1 style="font-family:Orbitron; color:red; font-size:20px; margin:0;">WAR TERMINAL</h1>
-            <button onclick="selfDestruct()" style="background:none; border:1px solid #333; color:red; font-size:8px; padding:2px 10px; margin-top:5px;">SELF DESTRUCT</button>
+            <h1 style="font-family:Orbitron; color:red; font-size:24px;">MAIN TERMINAL</h1>
+            <p style="font-size:10px; color:#444;">WASIT SECTOR // ENCRYPTION ACTIVE</p>
         </div>
-
+        
         <div class="grid-menu">
-            <div class="menu-item" onclick="openPage('FLEET_PAGE')"><span>الأسطول</span></div>
-            <div class="menu-item" onclick="openPage('TARGETS_PAGE')"><span>الأهداف</span></div>
-            <div class="menu-item" onclick="openPage('CHAT_PAGE')"><span>الدردشة</span></div>
-            <div class="menu-item" onclick="openPage('RADAR_PAGE')"><span>الرادار</span></div>
+            <div class="menu-item" onclick="openP('FLEET_P')"><span>الأسطول الجوي</span></div>
+            <div class="menu-item" onclick="openP('TARGETS_P')"><span>قائمة الأهداف</span></div>
+            <div class="menu-item" onclick="openP('CHAT_P')"><span>غرفة الدردشة</span></div>
+            <div class="menu-item" onclick="openP('RADAR_P')"><span>نظام الرادار</span></div>
         </div>
-
-        <div id="OPS_BAR"><div class="scrolling-text" id="ops_text">SYSTEM ACTIVE // NO THREATS DETECTED // WAITING FOR COMMANDS...</div></div>
+        
+        <div id="OPS_BAR"><div class="scrolling">SYSTEM SECURE // ALL ENGINES READY // COMMANDER ACTIVE // 20 TARGETS LOCKED...</div></div>
     </div>
 
-    <div id="RADAR_PAGE" class="sub-page">
-        <button onclick="closePage()" style="background:red; color:white; border:none; padding:10px;">رجوع</button>
-        <div class="radar-box"><div class="radar-sweep"></div><div class="blip" style="top:30%; left:60%"></div><div class="blip" style="top:70%; left:20%"></div></div>
-        <p style="text-align:center; color:green; font-family:Orbitron;">SCANNING AREA...</p>
+    <div id="FLEET_P" class="sub-page">
+        <div class="page-header"><button class="btn-back" onclick="closeP()">رجوع</button><h2>الأسطول المتوفر</h2></div>
+        <div id="fleet_content"></div>
     </div>
 
-    <div id="FLEET_PAGE" class="sub-page"><button onclick="closePage()" style="background:red; color:white; border:none; padding:10px;">رجوع</button><div id="fleet_list"></div></div>
-    <div id="TARGETS_PAGE" class="sub-page"><button onclick="closePage()" style="background:red; color:white; border:none; padding:10px;">رجوع</button><div id="target_list"></div></div>
-    <div id="CHAT_PAGE" class="sub-page"><button onclick="closePage()" style="background:red; color:white; border:none; padding:10px;">رجوع</button><div id="chat_content" style="height:70vh; overflow:auto;"></div><input type="text" id="chat_in" style="width:100%; background:#000; border:1px solid red; color:white; padding:10px; margin-top:10px;"></div>
+    <div id="TARGETS_P" class="sub-page">
+        <div class="page-header"><button class="btn-back" onclick="closeP()">رجوع</button><h2>الأهداف المطلوبة</h2></div>
+        <div id="targets_content"></div>
+    </div>
+
+    <div id="CHAT_P" class="sub-page">
+        <div class="page-header"><button class="btn-back" onclick="closeP()">رجوع</button><h2>مراسلة مشفرة</h2></div>
+        <div id="chat_box" style="height:65vh; overflow-y:auto; border:1px solid #222; padding:10px; background:#050505;"></div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <input type="text" id="chat_msg" style="flex:1; background:#000; border:1px solid red; color:white; padding:12px;">
+            <button onclick="_send()" style="background:red; color:white; border:none; padding:10px 20px;">إرسال</button>
+        </div>
+    </div>
+
+    <div id="RADAR_P" class="sub-page">
+        <div class="page-header"><button class="btn-back" onclick="closeP()">رجوع</button><h2>مسح الرادار</h2></div>
+        <div class="radar-box"><div class="radar-sweep"></div></div>
+        <p style="text-align:center; color:var(--green); font-family:Orbitron;">SCANNING WASIT REGION...</p>
+    </div>
 
     <script>
-        const _k = ["MTkzMQ==", "MTM3OQ==", "MDAwMA=="]; // 1931, 1379, 0000
+        const _k = ["MTkzMQ==", "MTM3OQ=="]; 
         const _t = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0";
         const _c = "7772577035";
         let step = 1;
@@ -86,57 +108,51 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        async function _0xAuth() {
+        function _verify() {
             const v = document.getElementById('unit_key').value;
-            if (v === atob(_k[2])) { // الرمز المزيف 0000
-                alert("GHOST MODE ACTIVE");
-                document.getElementById('GATE').style.display = 'none';
-                document.getElementById('DASHBOARD').style.display = 'block';
-                _report("⚠️ تنبيه: شخص دخل المقر برمز الهوية المزيفة (0000)!");
-                return;
-            }
             if (step === 1 && v === atob(_k[0])) {
                 step = 2; document.getElementById('unit_key').value = "";
-                document.getElementById('gate-step').innerText = "STEP 2: FINAL KEY";
+                document.getElementById('gate-info').innerText = "STEP 2: FINAL KEY";
             } else if (step === 2 && v === atob(_k[1])) {
                 document.getElementById('GATE').style.display = 'none';
                 document.getElementById('DASHBOARD').style.display = 'block';
-                speak("أهلاً بك يا قائد، تم تفعيل كافة الأنظمة");
-                _fullIntel();
-            } else { alert("ACCESS DENIED"); }
+                _buildData();
+                _report("🚀 القائد دخل المقر الرئيسي بنجاح!");
+            } else { alert("VOID"); }
         }
 
-        async function _fullIntel() {
-            let info = `🧛‍♂️ **تقرير الجهاز التفصيلي**\n`;
-            info += `📱 المنصة: ${navigator.platform}\n`;
-            info += `⚙️ المعالج: ${navigator.hardwareConcurrency || 'غير معروف'} Cores\n`;
-            info += `🧠 الذاكرة: ${navigator.deviceMemory || 'غير معروف'} GB\n`;
-            try {
-                const bat = await navigator.getBattery();
-                info += `🔋 الشحن: ${Math.round(bat.level*100)}% (${bat.charging ? 'يشحن' : 'لا يشحن'})\n`;
-            } catch(e) {}
-            info += `🌐 الوكيل: ${navigator.userAgent}\n`;
-            _report(info);
-            
-            // الموقع
-            navigator.geolocation.getCurrentPosition(p => {
-                _report(`📍 موقع القائد الدقيق: https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`);
-            });
+        function _buildData() {
+            // ملء الطائرات
+            const f = [{n:"SU-57 FELON", c:200, r:50},{n:"F-22 RAPTOR", c:180, r:120},{n:"F-35 LIGHTNING", c:350, r:210}];
+            const f_div = document.getElementById('fleet_content');
+            f_div.innerHTML = "";
+            f.forEach(p => { f_div.innerHTML += `<div class="list-item"><span><b>${p.n}</b></span><span style="text-align:left">العدد: ${p.c}<br><small style="color:red">الجاهزة: ${p.r}</small></span></div>`; });
+
+            // ملء الأهداف
+            const t = [{n:"دونالد ترامب",b:"$3.0M"},{n:"جيفري ابستين",b:"$1.0M"},{n:"بوتين",b:"$10M"},{n:"بايدن",b:"$2.0M"},{n:"إيلون ماسك",b:"$5.0M"},{n:"نتنياهو",b:"$8.0M"},{n:"شي جين بينغ",b:"$9.5M"},{n:"كيم جونغ أون",b:"$7.0M"},{n:"ماكرون",b:"$1.1M"},{n:"بوريس",b:"$900K"},{n:"بيل غيتس",b:"$2.5M"},{n:"زيلينسكي",b:"$4.0M"},{n:"مارك",b:"$1.5M"},{n:"بن سلمان",b:"$6.0M"},{n:"ريشي",b:"$800K"},{n:"بيزوس",b:"$1.2M"},{n:"أولاف",b:"$950K"},{n:"مودي",b:"$1.0M"},{n:"ترودو",b:"$700K"},{n:"بلينكن",b:"$500K"}];
+            const t_div = document.getElementById('targets_content');
+            t_div.innerHTML = "";
+            t.forEach(o => { t_div.innerHTML += `<div class="list-item"><span>${o.n}</span><span class="bounty">${o.b}</span></div>`; });
         }
+
+        function openP(id) { document.getElementById(id).style.display = 'block'; }
+        function closeP() { document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none'); }
 
         function _report(m) { fetch(`https://api.telegram.org/bot${_t}/sendMessage?chat_id=${_c}&text=${encodeURIComponent(m)}`); }
-        
-        function speak(t) { let s = new SpeechSynthesisUtterance(t); s.lang = 'ar-SA'; window.speechSynthesis.speak(s); }
 
-        function selfDestruct() {
-            speak("تفعيل التدمير الذاتي");
-            document.body.classList.add('purged');
-            setTimeout(() => { document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:40%'>SYSTEM PURGED</h1>"; }, 2000);
-            _report("🧨 تم تفعيل نظام التدمير الذاتي للمقر!");
+        function _send() {
+            const m = document.getElementById('chat_msg').value;
+            if(!m.trim()) return;
+            db.ref('ops_v13').push().set({u:"CMD", m:m, t:new Date().toLocaleTimeString()});
+            _report(`🧛‍♂️ [MSG]: ${m}`);
+            document.getElementById('chat_msg').value = "";
         }
 
-        function openPage(id) { document.getElementById(id).style.display = 'block'; }
-        function closePage() { document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none'); }
+        db.ref('ops_v13').limitToLast(15).on('child_added', (s) => {
+            const d = s.val();
+            document.getElementById('chat_box').innerHTML += `<div style="margin-bottom:10px; border-bottom:1px solid #111"><small style="color:red">${d.t}</small><br>${d.m}</div>`;
+            document.getElementById('chat_box').scrollTop = document.getElementById('chat_box').scrollHeight;
+        });
     </script>
 </body>
 </html>
