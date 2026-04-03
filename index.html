@@ -62,4 +62,101 @@
     <div id="OPERATIONS_HUB">
         <div class="header">
             <h1>مقر القيادة فرقة (NIGHT FURY)</h1>
-            <div style="font-size:
+            <div style="font-size: 9px; color: #444; font-family: 'Orbitron';">SECURE LINE // DOUBLE AUTH ACTIVE</div>
+        </div>
+        <div class="chat-display" id="chat-box"></div>
+        <div class="chat-controls">
+            <input type="text" id="chat-input" class="chat-input" placeholder="رسائل مشفرة">
+            <button class="btn-send" onclick="sendBroadcast()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- البيانات السرية المحدثة ---
+        const KEY_1 = "1931";
+        const KEY_2 = "1379";
+        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
+        const TG_ID = "7772577035"; 
+        
+        let step = 1;
+        let attempts = 0;
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDEawwmho55-yPdFzre4aDleIMB7YMW-Ew",
+          authDomain: "ali-air-base-3db5a.firebaseapp.com",
+          databaseURL: "https://ali-air-base-3db5a-default-rtdb.firebaseio.com/",
+          projectId: "ali-air-base-3db5a",
+          storageBucket: "ali-air-base-3db5a.appspot.com",
+          messagingSenderId: "644447806493",
+          appId: "1:644447806493:web:d1a8de1a1cbb27a6d912f4"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function checkStep() {
+            const input = document.getElementById('unit_key');
+            const title = document.getElementById('gate-title');
+            const desc = document.getElementById('gate-desc');
+            const btn = document.getElementById('deploy_btn');
+
+            if (step === 1) {
+                if (input.value === KEY_1) {
+                    step = 2;
+                    attempts = 0;
+                    input.value = "";
+                    title.innerText = "المستوى الثاني: شفرة التأكيد";
+                    title.style.color = "#00ff00";
+                    desc.innerText = "تم قبول المستوى الأول.. أدخل الشفرة النهائية (1379)";
+                    btn.innerText = "فتح المقر";
+                } else { handleFail(); }
+            } else if (step === 2) {
+                if (input.value === KEY_2) {
+                    document.getElementById('GATE').style.display = 'none';
+                    document.getElementById('OPERATIONS_HUB').style.display = 'flex';
+                    fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent("🧛‍♂️ تم تجاوز المستويين والدخول للمقر!")}`);
+                } else { handleFail(); }
+            }
+        }
+
+        function handleFail() {
+            attempts++;
+            document.getElementById('unit_key').value = "";
+            if (attempts >= 3) {
+                document.getElementById('unit_key').disabled = true;
+                document.getElementById('deploy_btn').disabled = true;
+                document.getElementById('stamp').innerText = "LOCKED";
+                document.getElementById('gate-title').innerText = "نظام محمي - تم الحظر";
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent("⚠️ محاولة اختراق فاشلة: تم قفل الجهاز بعد 3 محاولات!")}`);
+                alert("تم قفل النظام من هذا الجهاز!");
+            } else { alert(`خطأ! المحاولات المتبقية: ${3 - attempts}`); }
+        }
+
+        function sendBroadcast() {
+            const msg = document.getElementById('chat-input').value;
+            if (msg.trim() === "") return;
+            db.ref('night_fury_final_secure').push().set({
+                user: "AGENT-NF",
+                message: msg,
+                time: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})
+            });
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent("🧛‍♂️ [MSG]: " + msg)}`);
+            document.getElementById('chat-input').value = "";
+        }
+
+        db.ref('night_fury_final_secure').limitToLast(25).on('child_added', (snap) => {
+            const data = snap.val();
+            document.getElementById('chat-box').innerHTML += `<div class="msg"><span class="msg-user">>> ${data.user} [${data.time}]</span><div class="msg-text">${data.message}</div></div>`;
+            document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+        });
+
+        window.onblur = () => { 
+            document.getElementById('OPERATIONS_HUB').style.filter = "blur(40px)"; 
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent("⚠️ تنبيه: محاولة تصوير أو مغادرة المقر!")}`);
+        };
+        window.onfocus = () => { document.getElementById('OPERATIONS_HUB').style.filter = "none"; };
+    </script>
+</body>
+</html>
