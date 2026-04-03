@@ -3,149 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NIGHT FURY | TOP SECRET</title>
+    <title>NIGHT FURY | DOUBLE VERIFIED</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --red-alert: #ff0000; --panel-bg: #0a0a0a; }
+        :root { --red-alert: #ff0000; --locked: #440000; --success: #00ff00; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; user-select: none; -webkit-user-select: none; }
         
-        /* بوابة الولوج - TOP SECRET */
+        /* بوابة الولوج المعدلة */
         #GATE { position: fixed; width: 100%; height: 100%; background: black; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .top-secret-stamp { color: var(--red-alert); font-family: 'Orbitron'; border: 3px solid var(--red-alert); padding: 5px 15px; transform: rotate(-5deg); font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 10px var(--red-alert); }
         .auth-box { background: #0f0f0f; padding: 40px 20px; border: 2px solid var(--red-alert); text-align: center; width: 85%; max-width: 380px; border-radius: 10px; box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
-        .auth-box h2 { font-size: 16px; margin-bottom: 25px; color: #fff; line-height: 1.6; }
         
-        /* مستطيل كلمة السر البارز */
         .unit-id { background: #000; border: 2px solid var(--red-alert) !important; color: var(--red-alert); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; border-radius: 8px; box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.3); }
+        .unit-id:disabled { border-color: var(--locked) !important; color: var(--locked); }
+        
         .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px; font-weight: 900; cursor: pointer; border-radius: 5px; width: 85%; font-size: 16px; text-transform: uppercase; }
+        .btn-deploy:disabled { background: var(--locked); opacity: 0.5; }
 
-        /* مقر عمليات الفرقة الجوية */
+        /* مقر العمليات */
         #OPERATIONS_HUB { display: none; padding: 10px; height: 100vh; background: #000; flex-direction: column; box-sizing: border-box; transition: filter 0.3s ease; }
         .header { border-bottom: 1px solid #333; padding: 15px 0; text-align: center; }
         .header h1 { color: var(--red-alert); font-size: 16px; margin: 0; text-shadow: 0 0 5px var(--red-alert); font-weight: 900; }
-        .header .sub-title { font-size: 9px; color: #444; font-family: 'Orbitron'; margin-top: 5px; letter-spacing: 2px; }
 
-        /* صندوق الرسائل */
-        .chat-display { flex: 1; padding: 15px; overflow-y: auto; background: #050505; border: 1px solid #1a1a1a; margin: 10px 0; border-radius: 8px; margin-bottom: 100px; }
+        .chat-display { flex: 1; padding: 15px; overflow-y: auto; background: #050505; border: 1px solid #1a1a1a; margin: 10px 0; border-radius: 8px; margin-bottom: 110px; }
         
-        /* مستطيل المراسلة المرفوع والبارز */
+        /* مستطيل المراسلة المرفوع */
         .chat-controls { 
-            position: fixed; 
-            bottom: 40px; 
-            left: 10px; 
-            right: 10px;
-            background: #111; 
-            border: 2px solid var(--red-alert); 
-            padding: 10px; 
-            border-radius: 15px; 
-            display: flex; 
-            gap: 10px; 
-            align-items: center; 
-            box-shadow: 0 -5px 25px rgba(255, 0, 0, 0.3); 
-            z-index: 100;
+            position: fixed; bottom: 45px; left: 10px; right: 10px;
+            background: #111; border: 2px solid var(--red-alert); padding: 10px; border-radius: 15px; 
+            display: flex; gap: 10px; align-items: center; z-index: 100;
+            box-shadow: 0 -5px 25px rgba(255, 0, 0, 0.3);
         }
-        
-        .chat-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; outline: none; font-family: 'Cairo'; font-size: 14px; border-radius: 8px; }
+        .chat-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; outline: none; font-family: 'Cairo'; border-radius: 8px; }
         .chat-input::placeholder { color: #444; text-align: center; font-weight: bold; }
-        
         .btn-send { background: var(--red-alert); border: none; width: 55px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        /* تنسيق الرسائل */
-        .msg { margin-bottom: 15px; padding: 10px; border-right: 3px solid var(--red-alert); background: rgba(255, 255, 255, 0.03); border-radius: 0 5px 5px 0; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .msg { margin-bottom: 15px; padding: 10px; border-right: 3px solid var(--red-alert); background: rgba(255, 255, 255, 0.03); border-radius: 0 5px 5px 0; }
         .msg-user { color: var(--red-alert); font-size: 11px; font-weight: bold; font-family: 'Orbitron'; display: block; }
-        .msg-text { color: #ddd; font-size: 14px; margin-top: 5px; line-height: 1.5; }
+        .msg-text { color: #ddd; font-size: 14px; margin-top: 5px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div id="GATE">
-        <div class="top-secret-stamp">TOP SECRET</div>
+        <div class="top-secret-stamp" id="stamp">TOP SECRET</div>
         <div class="auth-box">
-            <h2>تسجيل الدخول لمقر عمليات الفرقة الجوية</h2>
+            <h2 id="gate-title" style="font-size: 15px;">تسجيل الدخول لمقر العمليات</h2>
+            <p id="gate-desc" style="font-size: 11px; color: #666; margin-bottom: 15px;">أدخل شفرة المستوى الأول (1931)</p>
             <input type="password" id="unit_key" class="unit-id" placeholder="****" maxlength="4">
-            <button class="btn-deploy" onclick="verifyAccess()">تأكيد الهوية العسكرية</button>
+            <button class="btn-deploy" id="deploy_btn" onclick="checkStep()">تأكيد الهوية</button>
+            <p style="color: #333; font-size: 9px; margin-top: 15px; font-family: 'Orbitron';">NIGHT FURY SECURE LINK</p>
         </div>
     </div>
 
     <div id="OPERATIONS_HUB">
         <div class="header">
             <h1>مقر القيادة فرقة (NIGHT FURY)</h1>
-            <div class="sub-title">SECURE LINE // ANTI-INTEL PROTOCOL</div>
-        </div>
-        
-        <div class="chat-display" id="chat-box"></div>
-        
-        <div class="chat-controls">
-            <input type="text" id="chat-input" class="chat-input" placeholder="رسائل مشفرة">
-            <button class="btn-send" onclick="sendBroadcast()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-            </button>
-        </div>
-    </div>
-
-    <script>
-        // --- تحديث البيانات حسب طلبك الجديد ---
-        const SECRET_CODE = "1931"; 
-        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
-        const TG_ID = "7772577035"; 
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyDEawwmho55-yPdFzre4aDleIMB7YMW-Ew",
-          authDomain: "ali-air-base-3db5a.firebaseapp.com",
-          databaseURL: "https://ali-air-base-3db5a-default-rtdb.firebaseio.com/",
-          projectId: "ali-air-base-3db5a",
-          storageBucket: "ali-air-base-3db5a.appspot.com",
-          messagingSenderId: "644447806493",
-          appId: "1:644447806493:web:d1a8de1a1cbb27a6d912f4"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        function verifyAccess() {
-            if(document.getElementById('unit_key').value === SECRET_CODE) {
-                document.getElementById('GATE').style.display = 'none';
-                document.getElementById('OPERATIONS_HUB').style.display = 'flex';
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=🧛‍♂️ صقر جديد من فرقة NIGHT FURY سجل دخوله الآن`);
-            } else { alert("ACCESS DENIED: شفرة خاطئة"); }
-        }
-
-        function sendBroadcast() {
-            const msg = document.getElementById('chat-input').value;
-            if (msg.trim() === "") return;
-            db.ref('night_fury_final_ops').push().set({
-                user: "NIGHT FURY AGENT",
-                message: msg,
-                time: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})
-            });
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent("🧛‍♂️ [NIGHT FURY MSG]: " + msg)}`);
-            document.getElementById('chat-input').value = "";
-        }
-
-        db.ref('night_fury_final_ops').limitToLast(25).on('child_added', (snap) => {
-            const data = snap.val();
-            document.getElementById('chat-box').innerHTML += `
-                <div class="msg">
-                    <span class="msg-user">>> ${data.user} [${data.time}]</span>
-                    <div class="msg-text">${data.message}</div>
-                </div>`;
-            document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
-        });
-
-        // --- حماية المقر ---
-        window.onblur = function() {
-            document.getElementById('OPERATIONS_HUB').style.filter = "blur(35px)";
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent("⚠️ تحذير: محاولة رصد أو خروج من المقر!")}`);
-        };
-        window.onfocus = function() {
-            document.getElementById('OPERATIONS_HUB').style.filter = "none";
-        };
-
-        document.getElementById('chat-input').addEventListener("keyup", (e) => { if(e.key === "Enter") sendBroadcast(); });
-    </script>
-</body>
-</html>
+            <div style="font-size:
