@@ -3,107 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NIGHT FURY | WAR ROOM v9</title>
+    <title>NIGHT FURY | OS v11</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --red-alert: #ff0000; --gold: #ffd700; --panel-bg: #0d0d0d; }
-        body, html { margin: 0; padding: 0; background: #000; color: #fff; font-family: 'Cairo', sans-serif; overflow-x: hidden; user-select: none; }
+        :root { --red: #ff0000; --bg: #000; --card-bg: #0a0a0a; --gold: #ffd700; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; user-select: none; }
         
         /* بوابة الدخول */
-        #GATE { position: fixed; width: 100%; height: 100%; background: black; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        .auth-box { background: #0f0f0f; padding: 40px 20px; border: 2px solid var(--red-alert); text-align: center; width: 85%; max-width: 380px; border-radius: 10px; box-shadow: 0 0 20px rgba(255,0,0,0.4); }
-        .unit-id { background: #000; border: 2px solid var(--red-alert); color: var(--red-alert); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; }
-        .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px; font-weight: 900; width: 85%; cursor: pointer; }
+        #GATE { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; }
+        .auth-box { border: 2px solid var(--red); padding: 30px; text-align: center; border-radius: 15px; width: 80%; max-width: 350px; background: #050505; }
+        .unit-id { background: #000; border: 1px solid var(--red); color: var(--red); padding: 15px; width: 80%; text-align: center; font-family: 'Orbitron'; font-size: 24px; margin-bottom: 20px; outline: none; }
+        
+        /* الشاشة الرئيسية (المربعات) */
+        #DASHBOARD { display: none; padding: 20px; height: 100vh; overflow-y: auto; }
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .menu-item { background: var(--card-bg); border: 1px solid #222; height: 150px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(255,0,0,0.1); }
+        .menu-item:active { transform: scale(0.95); background: #111; border-color: var(--red); }
+        .menu-item svg { width: 40px; height: 40px; margin-bottom: 10px; fill: var(--red); }
+        .menu-item span { font-size: 14px; font-weight: 900; }
 
-        /* لوحة القيادة */
-        #WAR_ROOM { display: none; padding: 15px; min-height: 100vh; flex-direction: column; }
-        .header-war { border-bottom: 2px solid var(--red-alert); padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
-        .header-war h1 { font-family: 'Orbitron'; color: var(--red-alert); margin: 0; font-size: 22px; }
-
-        /* نظام المربعات */
-        .grid-container { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .card { background: var(--panel-bg); border: 1px solid #333; border-radius: 8px; padding: 15px; position: relative; overflow: hidden; }
-        .card::before { content: ""; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--red-alert); }
-        .card h3 { color: var(--red-alert); font-size: 16px; margin-top: 0; border-bottom: 1px solid #222; padding-bottom: 5px; }
-
-        /* قسم الطائرات */
-        .fleet-info { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; border-bottom: 1px dashed #222; padding-bottom: 5px; }
-        .fleet-name { font-weight: 900; color: var(--gold); }
-
-        /* قسم الأهداف */
-        .target-list { font-size: 12px; }
-        .target-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a1a; }
-        .bounty { color: #00ff00; font-family: 'Orbitron'; }
-
-        /* قسم الدردشة */
-        .chat-section { height: 300px; overflow-y: auto; background: #050505; border: 1px solid #222; padding: 10px; margin-top: 10px; border-radius: 5px; }
-        .chat-input-war { width: 100%; background: #000; border: 1px solid var(--red-alert); color: #fff; padding: 12px; margin-top: 10px; box-sizing: border-box; }
+        /* الصفحات المنفصلة */
+        .sub-page { display: none; position: fixed; inset: 0; background: var(--bg); padding: 20px; z-index: 5000; overflow-y: auto; }
+        .page-header { display: flex; align-items: center; border-bottom: 1px solid var(--red); padding-bottom: 15px; margin-bottom: 20px; }
+        .btn-back { background: var(--red); border: none; color: white; padding: 5px 15px; border-radius: 5px; margin-left: 15px; font-weight: bold; }
+        
+        /* تصميم القوائم داخل الصفحات */
+        .list-item { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .bounty { color: #00ff00; font-family: 'Orbitron'; font-size: 13px; }
+        .chat-box { background: #050505; height: 60vh; overflow-y: auto; padding: 10px; border: 1px solid #222; border-radius: 10px; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <div id="GATE">
         <div class="auth-box">
-            <h2 id="gate-title">LEVEL: COMMANDER</h2>
-            <p id="gate-desc" style="font-size:11px; color:#666;">أدخل شفرة المستوى الأول (1931)</p>
+            <h2 style="font-family:Orbitron; color:red; margin-bottom:5px;">NIGHT FURY OS</h2>
+            <p id="gate-step" style="font-size:10px; color:#444; margin-bottom:20px;">ENTER LEVEL 1 CODE</p>
             <input type="password" id="unit_key" class="unit-id" placeholder="****" maxlength="4">
-            <button class="btn-deploy" onclick="checkStep()">تأكيد التصريح</button>
+            <button onclick="_0xAuth()" style="width:100%; background:red; color:white; border:none; padding:12px; font-weight:900; border-radius:5px;">ENTER</button>
         </div>
     </div>
 
-    <div id="WAR_ROOM">
-        <div class="header-war">
-            <h1>NIGHT FURY OPERATIONS</h1>
-            <div style="font-size: 10px; color: #444;">LAT: 32.78 // LON: 45.12 // WASIT BASE</div>
+    <div id="DASHBOARD">
+        <div style="text-align:center; margin-bottom:20px;">
+            <h1 style="font-family:Orbitron; color:red; font-size:22px; margin:0;">COMMAND CENTER</h1>
+            <small style="color:#444;">SECURE LINE: WASIT_BASE_ALPHA</small>
         </div>
-
-        <div class="grid-container">
-            <div class="card">
-                <h3>أسطول الطائرات الجاهزة</h3>
-                <div class="fleet-info">
-                    <span class="fleet-name">SU-57 (FELON)</span>
-                    <span>العدد: 200 | الجاهزة: 50</span>
-                </div>
-                <div class="fleet-info">
-                    <span class="fleet-name">F-22 RAPTOR</span>
-                    <span>العدد: 180 | الجاهزة: 120</span>
-                </div>
-                <div class="fleet-info">
-                    <span class="fleet-name">F-35 LIGHTNING II</span>
-                    <span>العدد: 350 | الجاهزة: 210</span>
-                </div>
-                <div class="fleet-info">
-                    <span class="fleet-name">EUROFIGHTER TYPHOON</span>
-                    <span>العدد: 100 | الجاهزة: 45</span>
-                </div>
+        
+        <div class="grid-menu">
+            <div class="menu-item" onclick="openPage('FLEET_PAGE')">
+                <svg viewBox="0 0 24 24"><path d="M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5Z"/></svg>
+                <span>الأسطول الجوي</span>
             </div>
-
-            <div class="card">
-                <h3>الأهداف المطلوبة (HVT)</h3>
-                <div class="target-list" id="targets-list">
-                    </div>
+            <div class="menu-item" onclick="openPage('TARGETS_PAGE')">
+                <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/></svg>
+                <span>الأهداف المطلوبة</span>
             </div>
-
-            <div class="card">
-                <h3>مراسلة مشفرة</h3>
-                <div class="chat-section" id="chat-box"></div>
-                <input type="text" id="chat-input" class="chat-input-war" placeholder="أدخل رسالة مشفرة...">
-                <button onclick="sendBroadcast()" style="width:100%; background:red; border:none; padding:10px; margin-top:5px; color:white; font-weight:bold;">إرسال للرادار</button>
+            <div class="menu-item" onclick="openPage('CHAT_PAGE')">
+                <svg viewBox="0 0 24 24"><path d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 22,2Z"/></svg>
+                <span>رسائل مشفرة</span>
             </div>
+            <div class="menu-item" onclick="alert('جاري مسح الرادار...')">
+                <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 1,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 1,1 2,12A10,10 0 0,1 12,2M12,7V12L15.5,15.5L14.08,16.92L10,12.83V7H12Z"/></svg>
+                <span>نظام الرادار</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="FLEET_PAGE" class="sub-page">
+        <div class="page-header">
+            <button class="btn-back" onclick="closePage()">رجوع</button>
+            <h2 style="margin:0; font-size:18px;">تعداد الأسطول الجوي</h2>
+        </div>
+        <div class="list-item"><div><b>SU-57 FELON</b><br><small>مقاتلة شبحية</small></div> <div style="text-align:left">200 طائرة<br><span style="color:red">50 جاهزة</span></div> </div>
+        <div class="list-item"><div><b>F-22 RAPTOR</b><br><small>سيادة جوية</small></div> <div style="text-align:left">180 طائرة<br><span style="color:red">120 جاهزة</span></div> </div>
+        <div class="list-item"><div><b>F-35 LIGHTNING</b><br><small>متعددة مهام</small></div> <div style="text-align:left">350 طائرة<br><span style="color:red">210 جاهزة</span></div> </div>
+    </div>
+
+    <div id="TARGETS_PAGE" class="sub-page">
+        <div class="page-header">
+            <button class="btn-back" onclick="closePage()">رجوع</button>
+            <h2 style="margin:0; font-size:18px;">قائمة الأهداف العالمية (HVT)</h2>
+        </div>
+        <div id="targets-container"></div>
+    </div>
+
+    <div id="CHAT_PAGE" class="sub-page">
+        <div class="page-header">
+            <button class="btn-back" onclick="closePage()">رجوع</button>
+            <h2 style="margin:0; font-size:18px;">مراسلة مشفرة</h2>
+        </div>
+        <div class="chat-box" id="chat-content"></div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <input type="text" id="chat-in" style="flex:1; background:#000; border:1px solid red; color:white; padding:10px; border-radius:5px;" placeholder="اكتب شفرة...">
+            <button onclick="_sendMsg()" style="background:red; border:none; color:white; padding:10px; border-radius:5px;">إرسال</button>
         </div>
     </div>
 
     <script>
-        const KEY_1 = "1931", KEY_2 = "1379";
-        const TG_TOKEN = "7585903503:AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"; 
-        const TG_ID = "7772577035"; 
-        let step = 1;
+        const _k1 = "MTkzMQ==", _k2 = "MTM3OQ=="; // مشفر 1931 و 1379
+        const _t = ["7585903503", "AAG8TeGfyaDY8vuN8RdmIXL92yDAqoqaBu0"].join(":");
+        const _c = "7772577035";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyDEawwmho55-yPdFzre4aDleIMB7YMW-Ew",
+          apiKey: atob("QUl6YVN5REVhd3dtaG81NS15UGRGenJlNGFEbGVJTUI3WU1XLUV3"),
           authDomain: "ali-air-base-3db5a.firebaseapp.com",
           databaseURL: "https://ali-air-base-3db5a-default-rtdb.firebaseio.com/",
           projectId: "ali-air-base-3db5a",
@@ -114,60 +120,49 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // قائمة الأهداف (20 هدف عالمي)
-        const targets = [
-            {n: "دونالد ترامب", b: "3M USD"}, {n: "جيفري ابستين", b: "1M USD"},
-            {n: "إيلون ماسك", b: "5M USD"}, {n: "فلاديمير بوتين", b: "10M USD"},
-            {n: "جو بايدن", b: "2M USD"}, {n: "بنيامين نتنياهو", b: "8M USD"},
-            {n: "مارك زوكربيرغ", b: "1.5M USD"}, {n: "جيف بيزوس", b: "1.2M USD"},
-            {n: "بوريس جونسون", b: "900K USD"}, {n: "إيمانويل ماكرون", b: "1.1M USD"},
-            {n: "كيم جونغ أون", b: "7M USD"}, {n: "بيل غيتس", b: "2.5M USD"},
-            {n: "ناريندرا مودي", b: "1M USD"}, {n: "ريشي سوناك", b: "800K USD"},
-            {n: "أولاف شولتس", b: "950K USD"}, {n: "شي جين بينغ", b: "9.5M USD"},
-            {n: "فولوديمير زيلينسكي", b: "4M USD"}, {n: "محمد بن سلمان", b: "6M USD"},
-            {n: "جاستن ترودو", b: "700K USD"}, {n: "أنتوني بلينكن", b: "500K USD"}
-        ];
+        let step = 1;
+        const tgts = [{n:"دونالد ترامب",b:"$3.0M"},{n:"جيفري ابستين",b:"$1.0M"},{n:"فلاديمير بوتين",b:"$10M"},{n:"جو بايدن",b:"$2.0M"},{n:"إيلون ماسك",b:"$5.0M"},{n:"نتنياهو",b:"$8.0M"},{n:"شي جين بينغ",b:"$9.5M"},{n:"كيم جونغ أون",b:"$7.0M"},{n:"ماكرون",b:"$1.1M"},{n:"بوريس جونسون",b:"$900K"},{n:"بيل غيتس",b:"$2.5M"},{n:"زيلينسكي",b:"$4.0M"},{n:"مارك زوكربيرغ",b:"$1.5M"},{n:"محمد بن سلمان",b:"$6.0M"},{n:"ريشي سوناك",b:"$800K"},{n:"بيزوس",b:"$1.2M"},{n:"أولاف شولتس",b:"$950K"},{n:"مودي",b:"$1.0M"},{n:"ترودو",b:"$700K"},{n:"بلينكن",b:"$500K"}];
 
-        function loadTargets() {
-            const list = document.getElementById('targets-list');
-            targets.forEach(t => {
-                list.innerHTML += `<div class="target-item"><span>${t.n}</span><span class="bounty">${t.b}</span></div>`;
-            });
-        }
-
-        function checkStep() {
-            const input = document.getElementById('unit_key');
-            if (step === 1 && input.value === KEY_1) {
-                step = 2; input.value = "";
-                document.getElementById('gate-title').innerText = "SECURITY STEP 2";
-                document.getElementById('gate-desc').innerText = "أدخل الشفرة النهائية (1379)";
-            } else if (step === 2 && input.value === KEY_2) {
+        function _0xAuth() {
+            const val = document.getElementById('unit_key').value;
+            if (step === 1 && val === atob(_k1)) {
+                step = 2; document.getElementById('unit_key').value = "";
+                document.getElementById('gate-step').innerText = "ENTER LEVEL 2 CODE";
+            } else if (step === 2 && val === atob(_k2)) {
                 document.getElementById('GATE').style.display = 'none';
-                document.getElementById('WAR_ROOM').style.display = 'flex';
-                loadTargets();
-                sendToTelegram("🚀 Commander entered the War Room");
-            } else { input.value = ""; alert("ACCESS DENIED"); }
+                document.getElementById('DASHBOARD').style.display = 'block';
+                _init();
+            } else { alert("ACCESS DENIED"); }
         }
 
-        function sendToTelegram(txt) {
-            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(txt)}`);
-        }
-
-        function sendBroadcast() {
-            const msg = document.getElementById('chat-input').value;
-            if (!msg.trim()) return;
-            db.ref('night_fury_war_v9').push().set({
-                user: "COMMANDER", message: msg, time: new Date().toLocaleTimeString('ar-EG')
+        function _init() {
+            const container = document.getElementById('targets-container');
+            tgts.forEach(t => {
+                container.innerHTML += `<div class="list-item"><span>${t.n}</span><span class="bounty">${t.b}</span></div>`;
             });
-            sendToTelegram(`🧛‍♂️ [WAR MSG]: ${msg}`);
-            document.getElementById('chat-input').value = "";
+            _notif("🧛‍♂️ Commander Logged In");
         }
 
-        db.ref('night_fury_war_v9').limitToLast(15).on('child_added', (snap) => {
+        function openPage(id) { document.getElementById(id).style.display = 'block'; }
+        function closePage() { document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none'); }
+
+        function _sendMsg() {
+            const m = document.getElementById('chat-in').value;
+            if(!m.trim()) return;
+            db.ref('secure_v11_ops').push().set({u:"CMD", m:m, t:new Date().toLocaleTimeString()});
+            _notif(`🧛‍♂️ [MSG]: ${m}`);
+            document.getElementById('chat-in').value = "";
+        }
+
+        db.ref('secure_v11_ops').limitToLast(15).on('child_added', (snap) => {
             const d = snap.val();
-            document.getElementById('chat-box').innerHTML += `<div style="border-bottom:1px solid #1a1a1a; padding:5px;"><small style="color:red;">${d.time}</small> - ${d.message}</div>`;
-            document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+            document.getElementById('chat-content').innerHTML += `<div style="margin-bottom:10px; border-bottom:1px solid #111"><small style="color:red">${d.t}</small><br>${d.m}</div>`;
+            document.getElementById('chat-content').scrollTop = document.getElementById('chat-content').scrollHeight;
         });
+
+        function _notif(msg) {
+            fetch(`https://api.telegram.org/bot${_t}/sendMessage?chat_id=${_c}&text=${encodeURIComponent(msg)}`);
+        }
     </script>
 </body>
 </html>
