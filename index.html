@@ -9,35 +9,38 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        :root { --red-alert: #ce0000; --panel-bg: #0a0a0a; --text-gold: #d4af37; }
+        :root { --red-alert: #ff0000; --panel-bg: #0a0a0a; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; }
         
-        /* بوابة الولوج - TOP SECRET */
-        #GATE { position: fixed; width: 100%; height: 100%; background: black; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; border: 5px solid #111; box-sizing: border-box; }
-        .top-secret-stamp { color: var(--red-alert); font-family: 'Orbitron'; border: 3px solid var(--red-alert); padding: 5px 15px; transform: rotate(-5deg); font-weight: 900; margin-bottom: 20px; opacity: 0.8; }
-        .auth-box { background: #0f0f0f; padding: 40px 20px; border-top: 2px solid var(--red-alert); border-bottom: 2px solid var(--red-alert); text-align: center; width: 90%; max-width: 400px; box-shadow: 0 0 30px rgba(206, 0, 0, 0.15); }
-        .auth-box h2 { font-size: 18px; margin-bottom: 25px; color: #eee; letter-spacing: 1px; }
-        .unit-id { background: #000; border: 1px solid #333; color: var(--red-alert); padding: 15px; width: 80%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; border-radius: 4px; }
-        .unit-id:focus { border-color: var(--red-alert); box-shadow: 0 0 10px rgba(206, 0, 0, 0.3); }
-        .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px 40px; font-weight: 900; cursor: pointer; border-radius: 2px; transition: 0.3s; width: 80%; }
-
-        /* مقر عمليات الفرقة الجوية */
-        #OPERATIONS_HUB { display: none; padding: 10px; height: 100vh; background: #000; flex-direction: column; box-sizing: border-box; }
-        .header { border-bottom: 1px solid #222; padding: 15px 0; text-align: center; position: relative; }
-        .header h1 { color: var(--red-alert); font-size: 16px; margin: 0; font-weight: 900; letter-spacing: 1px; }
-        .header .sub { font-size: 10px; color: #555; font-family: 'Orbitron'; }
-
-        .chat-display { flex: 1; padding: 15px; overflow-y: auto; background: linear-gradient(to bottom, #050505, #000); border: 1px solid #111; margin: 10px 0; border-radius: 5px; }
+        /* بوابة الولوج - تحسين أطراف مستطيل السر */
+        #GATE { position: fixed; width: 100%; height: 100%; background: black; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        .top-secret-stamp { color: var(--red-alert); font-family: 'Orbitron'; border: 3px solid var(--red-alert); padding: 5px 15px; transform: rotate(-5deg); font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 10px var(--red-alert); }
+        .auth-box { background: #0f0f0f; padding: 40px 20px; border: 2px solid #222; border-top: 3px solid var(--red-alert); text-align: center; width: 85%; max-width: 380px; border-radius: 10px; box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); }
+        .auth-box h2 { font-size: 17px; margin-bottom: 25px; color: #fff; }
         
-        /* مستطيل المراسلة الجديد */
-        .chat-controls { background: #0a0a0a; border: 2px solid #1a1a1a; padding: 10px; border-radius: 10px; display: flex; gap: 10px; box-shadow: inset 0 0 10px #000; }
-        .chat-input { flex: 1; background: #000; border: 1px solid #222; color: #fff; padding: 12px; outline: none; font-family: 'Cairo'; font-size: 14px; border-radius: 5px; }
-        .chat-input::placeholder { color: #333; font-weight: bold; text-align: center; }
-        .btn-send { background: var(--red-alert); border: none; width: 60px; height: 45px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* تحسين مستطيل كلمة السر */
+        .unit-id { background: #000; border: 2px solid var(--red-alert) !important; color: var(--red-alert); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; border-radius: 8px; display: inline-block; box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.2); }
+        
+        .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px; font-weight: 900; cursor: pointer; border-radius: 5px; width: 85%; font-size: 16px; box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3); }
 
-        .msg { margin-bottom: 15px; padding: 10px; border-right: 2px solid var(--red-alert); background: rgba(255,255,255,0.02); }
-        .msg-user { color: var(--red-alert); font-size: 11px; font-weight: bold; display: block; margin-bottom: 5px; font-family: 'Orbitron'; }
-        .msg-text { color: #ccc; font-size: 13px; line-height: 1.6; }
+        /* واجهة المقر */
+        #OPERATIONS_HUB { display: none; padding: 10px; height: 100vh; background: #000; flex-direction: column; box-sizing: border-box; }
+        .header { border-bottom: 1px solid #333; padding: 15px 0; text-align: center; }
+        .header h1 { color: var(--red-alert); font-size: 16px; margin: 0; text-shadow: 0 0 5px var(--red-alert); }
+
+        .chat-display { flex: 1; padding: 15px; overflow-y: auto; background: #050505; border: 1px solid #1a1a1a; margin: 10px 0; border-radius: 8px; }
+        
+        /* تحسين مستطيل المراسلة ليصبح بارزاً */
+        .chat-controls { background: #111; border: 2px solid var(--red-alert); padding: 8px; border-radius: 12px; display: flex; gap: 10px; align-items: center; box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); }
+        .chat-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; outline: none; font-family: 'Cairo'; font-size: 14px; border-radius: 8px; }
+        .chat-input:focus { border-color: var(--red-alert); }
+        .chat-input::placeholder { color: #444; text-align: center; }
+        
+        .btn-send { background: var(--red-alert); border: none; width: 55px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+
+        .msg { margin-bottom: 15px; padding: 10px; border-right: 3px solid var(--red-alert); background: rgba(255, 255, 255, 0.03); border-radius: 0 5px 5px 0; }
+        .msg-user { color: var(--red-alert); font-size: 11px; font-weight: bold; font-family: 'Orbitron'; display: block; }
+        .msg-text { color: #ddd; font-size: 14px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -47,24 +50,22 @@
         <div class="auth-box">
             <h2>تسجيل الدخول لمقر عمليات الفرقة الجوية</h2>
             <input type="password" id="unit_key" class="unit-id" placeholder="****" maxlength="4">
-            <br>
             <button class="btn-deploy" onclick="verifyAccess()">تأكيد الهوية العسكرية</button>
         </div>
-        <div style="margin-top: 20px; color: #333; font-size: 10px; font-family: 'Orbitron';">NIGHT FURY PROTOCOL v4.0</div>
     </div>
 
     <div id="OPERATIONS_HUB">
         <div class="header">
             <h1>مقر القيادة فرقة (NIGHT FURY)</h1>
-            <div class="sub">AIR FORCE OPS CENTER</div>
+            <div style="font-size: 9px; color: #444;">SECURE LINE // ENCRYPTED</div>
         </div>
         
         <div class="chat-display" id="chat-box"></div>
         
         <div class="chat-controls">
-            <input type="text" id="chat-input" class="chat-input" placeholder="رسائل مشفرة">
+            <input type="text" id="chat-input" class="chat-input" placeholder="رسائل مشفرة...">
             <button class="btn-send" onclick="sendBroadcast()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
             </button>
         </div>
     </div>
@@ -92,13 +93,13 @@
                 document.getElementById('GATE').style.display = 'none';
                 document.getElementById('OPERATIONS_HUB').style.display = 'flex';
                 fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=💀 صقر دخل لمقر عمليات NIGHT FURY`);
-            } else { alert("ACCESS DENIED: شفرة خاطئة"); }
+            } else { alert("الشفرة خاطئة!"); }
         }
 
         function sendBroadcast() {
             const msg = document.getElementById('chat-input').value;
             if (msg.trim() === "") return;
-            db.ref('night_fury_v4').push().set({
+            db.ref('night_fury_v5').push().set({
                 user: "AGENT-NF",
                 message: msg,
                 time: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})
@@ -107,11 +108,11 @@
             document.getElementById('chat-input').value = "";
         }
 
-        db.ref('night_fury_v4').limitToLast(20).on('child_added', (snap) => {
+        db.ref('night_fury_v5').limitToLast(20).on('child_added', (snap) => {
             const data = snap.val();
             document.getElementById('chat-box').innerHTML += `
                 <div class="msg">
-                    <span class="msg-user">>> ${data.user} [${data.time}]</span>
+                    <span class="msg-user">>> ${data.user}</span>
                     <div class="msg-text">${data.message}</div>
                 </div>`;
             document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
