@@ -12,31 +12,42 @@
         :root { --red-alert: #ff0000; --panel-bg: #0a0a0a; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; font-family: 'Cairo', sans-serif; overflow: hidden; }
         
-        /* بوابة الولوج - تحسين أطراف مستطيل السر */
+        /* بوابة الولوج */
         #GATE { position: fixed; width: 100%; height: 100%; background: black; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .top-secret-stamp { color: var(--red-alert); font-family: 'Orbitron'; border: 3px solid var(--red-alert); padding: 5px 15px; transform: rotate(-5deg); font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 10px var(--red-alert); }
-        .auth-box { background: #0f0f0f; padding: 40px 20px; border: 2px solid #222; border-top: 3px solid var(--red-alert); text-align: center; width: 85%; max-width: 380px; border-radius: 10px; box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); }
-        .auth-box h2 { font-size: 17px; margin-bottom: 25px; color: #fff; }
-        
-        /* تحسين مستطيل كلمة السر */
-        .unit-id { background: #000; border: 2px solid var(--red-alert) !important; color: var(--red-alert); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; border-radius: 8px; display: inline-block; box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.2); }
-        
-        .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px; font-weight: 900; cursor: pointer; border-radius: 5px; width: 85%; font-size: 16px; box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3); }
+        .auth-box { background: #0f0f0f; padding: 40px 20px; border: 2px solid var(--red-alert); text-align: center; width: 85%; max-width: 380px; border-radius: 10px; }
+        .unit-id { background: #000; border: 2px solid var(--red-alert); color: var(--red-alert); padding: 15px; width: 85%; text-align: center; font-family: 'Orbitron'; font-size: 28px; letter-spacing: 10px; margin-bottom: 25px; outline: none; border-radius: 8px; }
+        .btn-deploy { background: var(--red-alert); color: white; border: none; padding: 15px; font-weight: 900; cursor: pointer; border-radius: 5px; width: 85%; font-size: 16px; }
 
-        /* واجهة المقر */
+        /* مقر القيادة */
         #OPERATIONS_HUB { display: none; padding: 10px; height: 100vh; background: #000; flex-direction: column; box-sizing: border-box; }
         .header { border-bottom: 1px solid #333; padding: 15px 0; text-align: center; }
         .header h1 { color: var(--red-alert); font-size: 16px; margin: 0; text-shadow: 0 0 5px var(--red-alert); }
 
-        .chat-display { flex: 1; padding: 15px; overflow-y: auto; background: #050505; border: 1px solid #1a1a1a; margin: 10px 0; border-radius: 8px; }
+        /* صندوق الرسائل - صغرنا حجمه شوية حتى يرفع المستطيل */
+        .chat-display { flex: 1; padding: 15px; overflow-y: auto; background: #050505; border: 1px solid #1a1a1a; margin: 10px 0; border-radius: 8px; margin-bottom: 80px; } /* زدنا الهامش السفلي */
         
-        /* تحسين مستطيل المراسلة ليصبح بارزاً */
-        .chat-controls { background: #111; border: 2px solid var(--red-alert); padding: 8px; border-radius: 12px; display: flex; gap: 10px; align-items: center; box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); }
+        /* مستطيل المراسلة - تم رفعه للأعلى */
+        .chat-controls { 
+            position: fixed; 
+            bottom: 30px; /* رفعناه عن حافة الشاشة بـ 30 بكسل */
+            left: 10px; 
+            right: 10px;
+            background: #111; 
+            border: 2px solid var(--red-alert); 
+            padding: 10px; 
+            border-radius: 15px; 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+            box-shadow: 0 -5px 20px rgba(255, 0, 0, 0.2); 
+            z-index: 100;
+        }
+        
         .chat-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 12px; outline: none; font-family: 'Cairo'; font-size: 14px; border-radius: 8px; }
-        .chat-input:focus { border-color: var(--red-alert); }
-        .chat-input::placeholder { color: #444; text-align: center; }
+        .chat-input::placeholder { color: #555; text-align: center; font-weight: bold; }
         
-        .btn-send { background: var(--red-alert); border: none; width: 55px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+        .btn-send { background: var(--red-alert); border: none; width: 55px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         .msg { margin-bottom: 15px; padding: 10px; border-right: 3px solid var(--red-alert); background: rgba(255, 255, 255, 0.03); border-radius: 0 5px 5px 0; }
         .msg-user { color: var(--red-alert); font-size: 11px; font-weight: bold; font-family: 'Orbitron'; display: block; }
@@ -63,7 +74,7 @@
         <div class="chat-display" id="chat-box"></div>
         
         <div class="chat-controls">
-            <input type="text" id="chat-input" class="chat-input" placeholder="رسائل مشفرة...">
+            <input type="text" id="chat-input" class="chat-input" placeholder="رسائل مشفرة">
             <button class="btn-send" onclick="sendBroadcast()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
             </button>
@@ -92,14 +103,14 @@
             if(document.getElementById('unit_key').value === SECRET_CODE) {
                 document.getElementById('GATE').style.display = 'none';
                 document.getElementById('OPERATIONS_HUB').style.display = 'flex';
-                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=💀 صقر دخل لمقر عمليات NIGHT FURY`);
+                fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=💀 صقر من NIGHT FURY دخل للمقر`);
             } else { alert("الشفرة خاطئة!"); }
         }
 
         function sendBroadcast() {
             const msg = document.getElementById('chat-input').value;
             if (msg.trim() === "") return;
-            db.ref('night_fury_v5').push().set({
+            db.ref('night_fury_v6').push().set({
                 user: "AGENT-NF",
                 message: msg,
                 time: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})
@@ -108,7 +119,7 @@
             document.getElementById('chat-input').value = "";
         }
 
-        db.ref('night_fury_v5').limitToLast(20).on('child_added', (snap) => {
+        db.ref('night_fury_v6').limitToLast(20).on('child_added', (snap) => {
             const data = snap.val();
             document.getElementById('chat-box').innerHTML += `
                 <div class="msg">
